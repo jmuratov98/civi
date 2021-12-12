@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react'
+import React, { useState, memo } from 'react'
 import { Game } from '../game'
 import { ResourceObjectType } from '../managers/resources'
 
@@ -63,11 +63,7 @@ interface LeftColumnProps {
 export const LeftColumn: React.FC<LeftColumnProps> = ({ 
     game: g
 }: LeftColumnProps) => {
-    const [game, setGame] = useState(g);
-
-    useEffect(() => {
-        setGame(game)
-    })
+    const [game, _] = useState(g);
 
     function getResources(): ResourceObjectType[] {
         return Object.values(game.res.resources)
