@@ -1,6 +1,7 @@
 import { Game } from "./game";
 import { BuildingType, Price } from "./managers/buildings";
 import { LeftColumn } from './tsx/left-column'
+import { Tooltip } from './tsx/tooltip'
 import { getPosition, incrementCssVariable, setCssVariable } from "./utils";
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -139,74 +140,10 @@ export class Button {
         this._tooltip = document.getElementById('tooltip')
         
         const createTooltip = () => {
-            this._tooltip.innerText = '';
-        
-            // TODO: Add stuff here later
-            const tooltipHeader = document.createElement('header');
-            tooltipHeader.classList.add("tooltip__header");
-            this._tooltip.appendChild(tooltipHeader);
-
-            const tooltipBody = document.createElement('header');
-            tooltipBody.classList.add("tooltip__body");
-            this._tooltip.appendChild(tooltipBody);
-            
-            const tooltipDescription = document.createElement('p');
-            tooltipDescription.innerText = this._description;
-            tooltipBody.appendChild(tooltipDescription)
-
-            if(this._model) {
-                tooltipBody.appendChild(document.createElement('hr'))
-
-                const pricesLabel = document.createElement('p');
-                pricesLabel.classList.add("tooltip__label")
-                pricesLabel.innerText = 'prices';
-                tooltipBody.appendChild(pricesLabel);
-
-                const pricesSection = document.createElement('div');
-                pricesSection.classList.add('tooltip__prices');
-                tooltipBody.appendChild(pricesSection);
-                
-                // Prices
-                const prices = this._model.prices;
-                for(let i = 0; i < prices.length; i++) {
-                    const price = prices[i];
-
-                    const priceDiv = document.createElement('div');
-                    priceDiv.classList.add('tooltip__price');
-                    pricesSection.appendChild(priceDiv);
-
-                    const priceNameSpan = document.createElement('span');
-                    priceNameSpan.innerText = this._game.res.resources[price.name].label;
-                    priceDiv.appendChild(priceNameSpan);
-                    
-                    const priceAmountSpan = document.createElement('span');
-                    priceAmountSpan.innerText = price.amount.toString();
-                    priceDiv.appendChild(priceAmountSpan);
-                }
-
-                tooltipBody.appendChild(document.createElement('hr'))
-                
-                // Effects
-                const effectsLabel = document.createElement('p');
-                effectsLabel.classList.add("tooltip__label")
-                effectsLabel.innerText = 'effects';
-                tooltipBody.appendChild(effectsLabel);
-
-                const p = document.createElement('p')
-                p.innerText = 'To be implemented soon'
-                tooltipBody.appendChild(p)
-
-                // const effects = this._model.effects;
-                // for(let i in effects) {
-                //     const effect = effects[i];
-
-                // }
-            }
-
-            // TODO: Add stuff here later
-            const tooltipFooter = document.createElement('footer');
-            tooltipFooter.classList.add("tooltip__footer");
-            this._tooltip.appendChild(tooltipFooter);
+            return ReactDOM.render(
+                React.createElement(Tooltip, { game: this._game, button: this }),
+                this._tooltip
+            )
         }        
 
         this._dom.onmouseover = () => {
@@ -238,12 +175,15 @@ export class Button {
 
             this._tooltip.style.display = '';
         };
-        // this._dom.onmouseout = () => this._tooltip.style.display = "none"
+        this._dom.onmouseout = () => this._tooltip.style.display = "none"
     }
 
     public update(): void {
         // TODO: Add stuff here later
     }
+
+    get description(): string { return this._description; }
+    get model(): BuildingType { return this._model; }
 }
 
 export class ButtonController {

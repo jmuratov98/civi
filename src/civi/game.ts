@@ -152,4 +152,6 @@ export class Game {
 
     get res(): ResourceManager { return this._res; }
     get bld(): BuildingManager { return this._bld; }
+
+    get tickrate(): number { return this._ticksPerSecond}
 }

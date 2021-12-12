@@ -21,17 +21,37 @@
         text-transform: uppercase;
         font-size: .75em;
         letter-spacing: 0.1em;
-        margin: 8px 0;
+        padding-bottom: 8px;
     }
 
-    &__prices {
+    &__section {
         display: flex;
         flex-direction: column;
     }
 
     &__price {
         display: flex;
-        justify-content: space-between
+        justify-content: space-between;
+    
+        &-rs {
+            display: flex;
+        }
+
+        &-amount {
+            padding-right: 2px;
+            &::after {
+                padding-left: 2px;
+                content: '/'
+            }
+        }
+
+        &-max {
+            padding-right: 2px;
+        }
+
+        &-time {
+            display: flex;
+        }
     }
 
     &__footer {}
