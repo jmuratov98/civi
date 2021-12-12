@@ -1,0 +1,39 @@
+.tooltip {
+    --left: 0;
+    --top: 0;
+
+    background-color: white;
+    color: black;
+    z-index: 1000;
+
+    position: absolute;
+    border: 1px solid gray;
+    padding: 1rem;
+    left: calc(var(--left) * 1px);
+    top: calc(var(--top) * 1px);
+    text-align: center;
+
+    &__header {}
+
+    &__body {}
+
+    &__label {
+        text-transform: uppercase;
+        font-size: .75em;
+        letter-spacing: 0.1em;
+        margin: 8px 0;
+    }
+
+    &__prices {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__price {
+        display: flex;
+        justify-content: space-between
+    }
+
+    &__footer {}
+}
+

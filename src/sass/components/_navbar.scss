@@ -1,0 +1,34 @@
+.navbar {
+    display: flex;
+    background-color: var(--clr-primary-500);
+    z-index: 100;
+    border-bottom: 1px solid #d3d3d3;
+    min-height: 2.5rem;
+    font-size: var(--fs-300);
+    align-items: center;
+
+    &__brand {
+        padding-left: 1rem;
+        
+        &-title {
+            font-weight: 600;
+            letter-spacing: 0.05rem;
+        }
+        
+        &-subtitle {
+            font-size: small;
+        }
+    }
+
+    &__menu {
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    &__version {
+        padding-right: 1rem;
+        cursor: pointer;
+        letter-spacing: 1px;//0.065rem;
+    }
+
+}
