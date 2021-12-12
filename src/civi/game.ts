@@ -1,4 +1,4 @@
-import { DesktopUI, Button, ButtonController, FoodButtonController, WoodButtonController, StoneButtonController } from "./ui";
+import { DesktopUI, Button, BuildingButtonController, FoodButtonController, WoodButtonController, StoneButtonController } from "./ui";
 import { ResourceManager } from './managers/resources';
 import { BuildingManager } from './managers/buildings';
 
@@ -54,7 +54,7 @@ class ForestTab extends Tab {
             if(bld.unlocked) {
                 this._buttons.push(new Button({
                     label: bld.label,
-                    controller: new ButtonController(this.game),
+                    controller: new BuildingButtonController(this.game),
                     description: bld.description,
                     model: bld,
                     game: this.game

@@ -130,10 +130,17 @@ export class Button {
         this._dom = document.createElement("div");
         this._dom.classList.add("button");
         this._dom.innerText = this._label;
-        this._dom.onclick = () => this._controller.onclick();
+        if(this._model) {
+            this._dom.innerText += ` (${this._model.amount})`;
+        }
+        this._dom.onclick = () => this.onclick();
         container.appendChild(this._dom);
 
         this.renderTooltip();
+    }
+
+    private onclick(): void {
+        this._controller.handleClick(this._model)
     }
 
     private renderTooltip(): void {
@@ -186,46 +193,57 @@ export class Button {
     get model(): BuildingType { return this._model; }
 }
 
-export class ButtonController {
-    
-    protected _game: Game;
-    
+export interface ButtonController {
+    handleClick(model: BuildingType | null): void;
+}
+
+export class BuildingButtonController implements ButtonController {
+    private _game: Game;
+
     constructor(game: Game) { 
         this._game = game;
     }
 
-    onclick(): void {}
-
+    handleClick(model: BuildingType | null): void {
+        this._game.bld.buyBuilding(model?.name);
+        this._game.render();
+    }
 }
 
-export class FoodButtonController extends ButtonController {
+export class FoodButtonController implements ButtonController {
+    private _game: Game;
+
     constructor(game: Game) { 
-        super(game);
+        this._game = game;
     }
 
-    onclick(): void {
+    handleClick(): void {
         this._game.res.increment('food', 1);
         this._game.render();
     }
 }
 
-export class WoodButtonController extends ButtonController {
+export class WoodButtonController implements ButtonController {
+    private _game: Game;
+
     constructor(game: Game) { 
-        super(game);
+        this._game = game;
     }
 
-    onclick(): void {
+    handleClick(): void {
         this._game.res.increment('wood', 1);
         this._game.render();
     }
 }
 
-export class StoneButtonController extends ButtonController {
+export class StoneButtonController implements ButtonController {
+    private _game: Game;
+    
     constructor(game: Game) { 
-        super(game);
+        this._game = game;
     }
 
-    onclick(): void {
+    handleClick(): void {
         this._game.res.increment('stone', 1);
         this._game.render();
     }

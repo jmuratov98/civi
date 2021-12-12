@@ -62,6 +62,17 @@ export class BuildingManager {
 
     buyBuilding(name: string): void {
         const bld = this._buildings[name];
+        const res = bld.prices.every((p: Price) => this._game.res.resources[p.name].amount >= this.getTotalPrice(bld, p))
+        if(res) {
+            bld.prices.forEach((p: Price): void => {
+                this._game.res.resources[p.name].amount -= this.getTotalPrice(bld, p)
+            })
+            bld.amount++;
+        }
+    }
+
+    public getTotalPrice({ priceRatio, amount }: BuildingType, price: Price): number { 
+        return price.amount * Math.pow(priceRatio, amount);
     }
 
     update(): void {
