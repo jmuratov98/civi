@@ -1,4 +1,5 @@
 import { Game } from '../game'
+import { fixFloatingPointNumber } from '../utils';
 
 export interface ResourceObjectType {
     name: string;
@@ -56,7 +57,8 @@ export class ResourceManager {
 
             if(!res.unlocked && res.amount > 0) res.unlocked = true;
 
-            this.increment(res.name, res.pertick);            
+            this.increment(res.name, res.pertick);   
+            res.amount = fixFloatingPointNumber(res.amount)         
         }
     }
 

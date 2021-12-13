@@ -1,8 +1,8 @@
 import { Game } from "./game";
-import { BuildingType, Price } from "./managers/buildings";
+import { BuildingType } from "./managers/buildings";
 import { LeftColumn } from './tsx/left-column'
 import { Tooltip } from './tsx/tooltip'
-import { getPosition, incrementCssVariable, setCssVariable } from "./utils";
+import { getPosition, setCssVariable } from "./utils";
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -10,7 +10,7 @@ export class DesktopUI {
     private _gameContainerID: string
     private _game: Game;
 
-    private _activeTabId = 'Forest';
+    private _activeTabId = 'Civilization';
 
     constructor(gameContainerID: string) {
         this._gameContainerID = gameContainerID;

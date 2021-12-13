@@ -1,4 +1,5 @@
 import { Game } from '../game';
+import { fixFloatingPointNumber } from '../utils';
 
 export interface Price {
     name: string;
@@ -72,7 +73,7 @@ export class BuildingManager {
     }
 
     public getTotalPrice({ priceRatio, amount }: BuildingType, price: Price): number { 
-        return price.amount * Math.pow(priceRatio, amount);
+        return fixFloatingPointNumber(price.amount * Math.pow(priceRatio, amount));
     }
 
     update(): void {

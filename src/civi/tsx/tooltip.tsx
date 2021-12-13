@@ -28,7 +28,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     game,
     button
 }: TooltipProps) => {
-    const getPrice = (price: Price): number => price.amount * Math.pow(button.model.priceRatio, button.model.amount)
+    const getPrice = (price: Price): number => game.bld.getTotalPrice(button.model, price)
 
     const formatTime = (currAmt: number, maxAmount: number, rate: number): ReactElement => {
         const diff = maxAmount - currAmt;

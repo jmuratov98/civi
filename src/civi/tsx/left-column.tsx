@@ -1,6 +1,7 @@
 import React, { useState, memo } from 'react'
 import { Game } from '../game'
 import { ResourceObjectType } from '../managers/resources'
+import { fixFloatingPointNumber } from '../utils'
 
 
 // RESOURCE ROW
@@ -10,12 +11,10 @@ interface ResourceRowProps {
 const ResourceRow: React.FC<ResourceRowProps> = ({
     res
 }: ResourceRowProps) => {
-    console.log(res.amount);
-    
     return (
         <div className={`res-row res-${res.name}`}>
             <span className="res-cell">{res.label}</span>
-            <span className="res-cell">{res.amount}</span>
+            <span className="res-cell">{fixFloatingPointNumber(res.amount)}</span>
             <span className="res-cell">{res.max}</span>
             <span className="res-cell">{res.pertick}</span>
         </div>
