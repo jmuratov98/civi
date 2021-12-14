@@ -1,12 +1,12 @@
-import { Game } from '../game'
+import { Game, ResourceSaveData } from '../game'
 import { fixFloatingPointNumber } from '../utils';
 import { Manager } from './manager';
 
 export interface ResourceObjectType {
     name: string;
     label: string;
-    amount: number;
-    unlocked: boolean;
+    amount?: number;
+    unlocked?: boolean;
 }
 
 type ResourceMapType = {
@@ -14,7 +14,7 @@ type ResourceMapType = {
 }
 
 export class ResourceManager extends Manager {
-    static readonly resData = [{
+    static readonly resData: ResourceObjectType[] = [{
         name: 'food',
         label: 'Food',
     }, {
@@ -30,14 +30,12 @@ export class ResourceManager extends Manager {
     constructor(game: Game) {
         super(game)
         this._resources = {};
-        ResourceManager.resData.reduce((resMap, res) => {
-            resMap[res.name] = {
-                ...res,
-                amount: 0,
-                unlocked: false,
-            };
-            return resMap;
-        }, this._resources);
+        for(let i = 0; i < ResourceManager.resData.length; i++) {
+            const res = ResourceManager.resData[i]
+            res.amount = 0;
+            res.unlocked = false
+            this._resources[res.name] = res;
+        }
     }
 
     update(): void {
@@ -56,6 +54,29 @@ export class ResourceManager extends Manager {
         const res = this._resources[resName];
         if(res.amount + amount <= 5000)
             res.amount += amount;
+    }
+
+    public save(): ResourceSaveData[] {
+        const resources: ResourceSaveData[] = [];
+        for(let i = 0; i < ResourceManager.resData.length; i++) {
+            const res = ResourceManager.resData[i];
+            console.log(res);
+            const saveRes: ResourceSaveData = {
+                name: res.name,
+                amount: res.amount,
+                unlocked: res.unlocked
+            }
+            resources.push(saveRes);
+        }
+        return resources;
+    }
+
+    public load(resources: ResourceSaveData[]): void {
+        for(let i = 0; i < resources.length; i++) {
+            const res = resources[i];
+            this._resources[res.name].amount = res.amount
+            this._resources[res.name].unlocked = res.unlocked
+        }
     }
 
     private getResourcePerRick(resName: string): number {

@@ -36,6 +36,23 @@ class Observer {
 
 }
 
+export type ResourceSaveData = {
+    name: string,
+    amount: number,
+    unlocked: boolean
+}
+
+export type BuildingSaveData = {
+    name: string,
+    amount: number,
+    unlocked: boolean
+}
+
+type SaveData = {
+    resources: ResourceSaveData[],
+    buildings: BuildingSaveData[],
+}
+
 export class Game {
     private _ui: DesktopUI;
     private _tabs: Tab[];
@@ -112,6 +129,28 @@ export class Game {
 
     public stringifyEffect(effectName: string): string { 
         if(effectName === 'foodPerTickBase') return 'food per tick';
+    }
+
+    public save(): void {
+        const saveData: SaveData = {
+            resources: this.res.save(),
+            buildings: this.bld.save()
+        };
+
+        const saveDataString = JSON.stringify(saveData);
+        window.localStorage.setItem('civi.savedata', saveDataString);
+        console.log('saved');
+    }
+
+    public load(): void {
+        console.log('loading');
+        const dataString: string = window.localStorage.getItem('civi.savedata');
+        if(!dataString) 
+            return;
+            
+        const { resources, buildings} = JSON.parse(dataString);
+        this.res.load(resources);
+        this.bld.load(buildings);
     }
 
     get tabs(): Tab[] { return this._tabs; }

@@ -20,10 +20,7 @@ export class DesktopUI {
         this.updateTabs();
         
         // This is to force re-render the left component
-        ReactDOM.render(
-            React.createElement(LeftColumn, { game: this.game }),
-            document.getElementById('left-column'),
-        )
+        this.renderLeftColumn()
     }
 
     private updateTabs(): void {

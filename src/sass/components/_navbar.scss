@@ -25,6 +25,17 @@
         flex-shrink: 0;
     }
 
+    &__end {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+    }
+
+    &__item {
+        margin-right: 1rem;
+        cursor: pointer;
+    }
+
     &__version {
         padding-right: 1rem;
         cursor: pointer;
