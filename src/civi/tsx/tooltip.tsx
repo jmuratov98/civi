@@ -56,7 +56,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
                                             <div className="tooltip__price-rs">
                                                 <span className="tooltip__price-amount">{game.res.resources[price.name].amount}</span>
                                                 <span className="tooltip__price-max">{getPrice(price)}</span>
-                                                <span className="tooltip__price-time">{formatTime(game.res.resources[price.name].amount, getPrice(price), game.res.resources[price.name].pertick)}</span>
+                                                <span className="tooltip__price-time">{formatTime(game.res.resources[price.name].amount, getPrice(price), 0)}</span>
                                             </div>
                                         ) : (
                                             <span className="tooltip__price-rs">{getPrice(price)}</span>
@@ -69,7 +69,12 @@ export const Tooltip: React.FC<TooltipProps> = ({
                         </TooltipSection>
                         <hr />
                         <TooltipSection label="effects">
-                            To be implemented soon
+                            {Object.entries(button.model.effects).map(([ effectName, effectValue ], i) => (
+                                <div key={i}>
+                                    <span>{game.stringifyEffect(effectName)}</span>
+                                    <span>{effectValue}</span>
+                                </div>
+                            ))}
                         </TooltipSection>
                     </React.Fragment>
                 )}

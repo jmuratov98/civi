@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react'
+import React, { useState, useEffect, useMemo, memo } from 'react'
 import { Game } from '../game'
 import { ResourceObjectType } from '../managers/resources'
 import { fixFloatingPointNumber } from '../utils'
@@ -12,20 +12,18 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
     res
 }: ResourceRowProps) => {
     return (
-        <div className={`res-row res-${res.name}`}>
+        <div key={res.amount} className={`res-row res-${res.name}`}>
             <span className="res-cell">{res.label}</span>
             <span className="res-cell">{fixFloatingPointNumber(res.amount)}</span>
-            <span className="res-cell">{res.max}</span>
-            <span className="res-cell">{res.pertick}</span>
+            <span className="res-cell">{0}</span>
+            <span className="res-cell">{0}</span>
         </div>
     )
 }
 
 function areEqual(a: ResourceRowProps, b: ResourceRowProps): boolean {
     return !(
-        a.res.amount === b.res.amount &&
-        a.res.max === b.res.max &&
-        a.res.pertick === b.res.pertick
+        a.res.amount === b.res.amount
     )
 }
 
@@ -62,7 +60,13 @@ interface LeftColumnProps {
 export const LeftColumn: React.FC<LeftColumnProps> = ({ 
     game: g
 }: LeftColumnProps) => {
-    const [game, _] = useState(g);
+    const [game, setGame] = useState(g);
+
+    useEffect(() => {
+        game.observer.on('ui-update', (ga: Game):void => {
+            setGame(ga)
+        });
+    }, []);
 
     function getResources(): ResourceObjectType[] {
         return Object.values(game.res.resources)

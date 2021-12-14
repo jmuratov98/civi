@@ -1,5 +1,6 @@
 import { Game } from '../game';
 import { fixFloatingPointNumber } from '../utils';
+import { Manager } from './manager';
 
 export interface Price {
     name: string;
@@ -14,8 +15,8 @@ export interface BuildingType {
    prices: Price[];
    priceRatio: number;
    effects: Record<string, number>;
-   amount: number;
-   unlocked: boolean;
+   amount?: number;
+   unlocked?: boolean;
 }
 
 type BuildingMapType = { [name: string]: BuildingType };
@@ -26,9 +27,9 @@ function isUnlockable(bld: BuildingType, game: Game): boolean {
     return res;
 }
 
-export class BuildingManager {
+export class BuildingManager extends Manager {
     
-    static readonly buildingsData = [{
+    static readonly buildingsData: BuildingType[] = [{
         name: 'farm',
         label: 'Farm',
         description: 'A farm where you can farm some food',
@@ -37,28 +38,28 @@ export class BuildingManager {
             { name: 'food', amount: 10 }
         ],
         priceRatio: 1.12,
-
-        // I don't know how i want to work with the effects
         effects: {
             'foodPerTickBase': 0.125,
         },
     }];
 
-    private _game: Game;
-
     readonly _buildings: BuildingMapType;
     
     constructor(game: Game) {
-        this._game = game;
+        super(game);
         this._buildings = {};
-        BuildingManager.buildingsData.reduce((bldMap, bld) => {
-            bldMap[bld.name] = {
-                ...bld,
-                amount: 0,
-                unlocked: false
+        for(let i = 0; i < BuildingManager.buildingsData.length; i++) {
+            const bld = BuildingManager.buildingsData[i]
+            bld.amount = 0;
+            bld.unlocked = false;
+            this._buildings[bld.name] = bld;
+        }
+        this.initializeMeta(BuildingManager.buildingsData, {
+            getEffect: function(bld: BuildingType, effectName: string) {
+                return bld.effects[effectName] * bld.amount;
             }
-            return bldMap;
-        }, this._buildings)
+        });
+        this.initEffectCached();
     }
 
     buyBuilding(name: string): void {
