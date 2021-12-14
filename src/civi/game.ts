@@ -153,6 +153,11 @@ export class Game {
         this.bld.load(buildings);
     }
 
+    public wipe(): void {
+        window.localStorage.removeItem('civi.savedata');
+        window.location.reload();
+    }
+
     get tabs(): Tab[] { return this._tabs; }
 
     get res(): ResourceManager { return this._res; }

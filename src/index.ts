@@ -14,4 +14,9 @@ window.onload = function () {
         console.log('saving...'); // TODO: This should be logged out in the game console, not window.console.
         (window as any).game.save();
     }
+
+    document.getElementById('wipe-btn').onclick = function() {
+        console.log('wiping...'); // TODO: This should be logged out in the game console, not window.console.
+        (window as any).game.wipe();
+    }
 }
