@@ -240,7 +240,7 @@ export class BuildingButtonController implements ButtonController {
 
         if(model.name == 'hut') {
             // Adds a timer from when the user buys a hut, until the villager arrives to the village
-            window.setInterval(() => {
+            window.setTimeout(() => {
                 this._game.console.pushMessage('A villager has joined your civilization')
                 this._game.res.increment('villagers', 1);
             }, 10000)
