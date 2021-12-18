@@ -3,37 +3,34 @@ import { Tab, CivilizationTab, VillageTab, ScienceTab, WorkshopTab, DiplomacyTab
 import { ResourceManager } from './managers/resources';
 import { BuildingManager } from './managers/buildings';
 
-type HandlerFn<T extends any[]> = (...args: T) => void;
+class Console {
+    private _game: Game;
 
-interface ObserverType {
-    name: string,
-    handler: HandlerFn<any[]>;
-}
+    private _messages: string[]; // TODO: A message should have more data allocated to it, like date/year
 
-// TODO: May do other things later
-class Observer {
-    private _observers: ObserverType[];
-
-    constructor() {
-        this._observers = [];
+    constructor(game: Game) {
+        this._game = game;
+        this._messages = [];
     }
 
-    on<T extends any[]>(name: string, handler: HandlerFn<T>) {
-        this._observers.push({ name, handler });
+    public pushMessage(message: string): void {
+        this._messages.unshift(message);
+        this._game.render();
     }
 
-    off(name: string) {
-        const index = this._observers.findIndex(observer => observer.name === name);
-        if(index === -1)
-            return;
-        this._observers.splice(index, 1);
+    public clear(): void {
+        this._messages = [];
+        this._game.render();
     }
 
-    fire(name: string, args: any[]) {
-        const observer = this._observers.find(observer => observer.name === name);
-        observer.handler.call(undefined, ...args);
+    public renderMessage(container: HTMLElement, message: string): void {
+        const msg = document.createElement('span');
+        msg.className = 'message';
+        msg.innerText = message;
+        container.appendChild(msg);
     }
 
+    get messages(): string[] { return this._messages; }
 }
 
 export type ResourceSaveData = {
@@ -61,7 +58,7 @@ export class Game {
     private _res: ResourceManager;
     private _bld: BuildingManager;
 
-    readonly observer: Observer;
+    private _console: Console;
 
     private _effects: Record<string, number>;
 
@@ -89,7 +86,8 @@ export class Game {
 
         this._effects = {};
 
-        this.observer = new Observer();
+        this._console = new Console(this);
+        this._console.pushMessage('Welcome to civi'); // Change this to have the civilizations name
     }
 
     public start(): void {
@@ -128,7 +126,10 @@ export class Game {
     }
 
     public stringifyEffect(effectName: string): string { 
-        if(effectName === 'foodPerTickBase') return 'food per tick';
+        if(effectName === 'foodPerTickBase') return 'Food per tick';
+        if(effectName === 'villagersMax') return 'Max villagers';
+        if(effectName === 'scienceMax') return 'Max science';
+        if(effectName === 'scienceRatio') return 'Science bonus';
     }
 
     public save(): void {
@@ -139,11 +140,9 @@ export class Game {
 
         const saveDataString = JSON.stringify(saveData);
         window.localStorage.setItem('civi.savedata', saveDataString);
-        console.log('saved');
     }
 
     public load(): void {
-        console.log('loading');
         const dataString: string = window.localStorage.getItem('civi.savedata');
         if(!dataString) 
             return;
@@ -158,11 +157,29 @@ export class Game {
         window.location.reload();
     }
 
+    public unlock(unlocks: Record<string, string[]>): void {
+        if(unlocks.tabs) {
+            const { tabs: tabsNames } = unlocks;
+            for(let i = 0; i < tabsNames.length; i++) {
+                const tabName = tabsNames[i];
+
+                const tabIndex = this._tabs.findIndex(tab => tab.id === tabName);
+                const tab = this._tabs[tabIndex];
+                if(tab.visible)
+                    continue;
+                tab.visible = true;
+                
+            }
+        }
+    }
+
     get tabs(): Tab[] { return this._tabs; }
 
     get res(): ResourceManager { return this._res; }
     get bld(): BuildingManager { return this._bld; }
     get effects(): Record<string, number> { return this._effects; }
+    
+    get console(): Console { return this._console; }
 
     get tickrate(): number { return this._ticksPerSecond}
 }

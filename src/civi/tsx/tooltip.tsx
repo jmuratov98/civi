@@ -70,7 +70,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
                         <hr />
                         <TooltipSection label="effects">
                             {Object.entries(button.model.effects).map(([ effectName, effectValue ], i) => (
-                                <div key={i}>
+                                <div key={i} className="tooltip__price">
                                     <span>{game.stringifyEffect(effectName)}</span>
                                     <span>{effectValue}</span>
                                 </div>

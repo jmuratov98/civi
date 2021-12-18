@@ -11,7 +11,7 @@ export abstract class Tab {
     protected constructor(label: string, id: string) {
         this._label = label;
         this._id = id;
-        this._visible = true;
+        this._visible = false;
         this._buttons = [];
     }
 

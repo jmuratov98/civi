@@ -3,20 +3,25 @@ import { Game } from '../game'
 import { ResourceObjectType } from '../managers/resources'
 import { fixFloatingPointNumber } from '../utils'
 
+type getEffectFn = (resName: string) => number;
 
 // RESOURCE ROW
 interface ResourceRowProps {
-    res: ResourceObjectType
+    res: ResourceObjectType;
+    getResourcePerTickEffect: getEffectFn;
+    getResourceMaxEffect: getEffectFn;
 }
 const ResourceRow: React.FC<ResourceRowProps> = ({
-    res
+    res,
+    getResourcePerTickEffect,
+    getResourceMaxEffect
 }: ResourceRowProps) => {
     return (
-        <div key={res.amount} className={`res-row res-${res.name}`}>
-            <span className="res-cell">{res.label}</span>
-            <span className="res-cell">{fixFloatingPointNumber(res.amount)}</span>
-            <span className="res-cell">{0}</span>
-            <span className="res-cell">{0}</span>
+        <div className={`res-row res-${res.name}${!res.unlocked ? ' hidden': ''}`}>
+            <div className="res-cell res-name">{res.label}</div>
+            <div className="res-cell res-amount">{fixFloatingPointNumber(res.amount)}</div>
+            <div className="res-cell res-max">/{getResourceMaxEffect(res.name)}</div>
+            <div className="res-cell res-pertick">{getResourcePerTickEffect(res.name)}</div>
         </div>
     )
 }
@@ -33,9 +38,13 @@ const ResourceRowMemo = memo(ResourceRow, areEqual)
 // RESOURCE TABLE
 interface ResourceTableProps {
     resources: ResourceObjectType[];
+    getResourcePerTickEffect: getEffectFn;
+    getResourceMaxEffect: getEffectFn;
 }
 const ResourceTable: React.FC<ResourceTableProps> = ({
-    resources
+    resources,
+    getResourcePerTickEffect,
+    getResourceMaxEffect
 }: ResourceTableProps) => {
 
     return (
@@ -45,6 +54,8 @@ const ResourceTable: React.FC<ResourceTableProps> = ({
                     <ResourceRowMemo
                         key={i}
                         res={res}
+                        getResourcePerTickEffect={getResourcePerTickEffect}
+                        getResourceMaxEffect={getResourceMaxEffect}
                     />
                 ))
             }
@@ -60,16 +71,19 @@ interface LeftColumnProps {
 export const LeftColumn: React.FC<LeftColumnProps> = ({ 
     game: g
 }: LeftColumnProps) => {
-    const [game, setGame] = useState(g);
-
-    useEffect(() => {
-        game.observer.on('ui-update', (ga: Game):void => {
-            setGame(ga)
-        });
-    }, []);
+    const [game, _] = useState(g);
 
     function getResources(): ResourceObjectType[] {
         return Object.values(game.res.resources)
+    }
+
+    function getResourcePerTickEffect(resName: string): number {
+        return game.getEffect(resName + 'PerTickBase')
+    }
+
+    function getResourceMaxEffect(resName: string): number {
+        const effectName = resName + 'Max';
+        return game.getEffect(effectName);
     }
 
     return (
@@ -78,6 +92,8 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({
                 <label className="table-label">resources</label>
                 <ResourceTable
                     resources={getResources()}
+                    getResourcePerTickEffect={getResourcePerTickEffect}
+                    getResourceMaxEffect={getResourceMaxEffect}
                 />
             </div>
         </>

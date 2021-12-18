@@ -38,6 +38,7 @@ export class DesktopUI {
         this.renderTabs(gameContainer);
         this.renderActiveTab(gameContainer);
         this.renderLeftColumn();
+        this.renderConsole();
     }
 
     private renderTabs(container: HTMLElement): void {
@@ -98,6 +99,29 @@ export class DesktopUI {
             document.getElementById('left-column'),
         )
 
+    }
+
+    private renderConsole(): void { 
+        const container = document.getElementById('console-container');
+        container.innerHTML = ''
+
+        const consoleHeader = document.createElement('header');
+        consoleHeader.className = 'console__header';
+        container.appendChild(consoleHeader);
+
+        const clearLog = document.createElement('span')
+        clearLog.innerHTML = 'Clear Log';
+        clearLog.className = 'console__clear'
+        clearLog.onclick = () => this._game.console.clear();
+        consoleHeader.appendChild(clearLog);
+
+        const consoleBody = document.createElement('div');
+        consoleBody.className = 'console__body';
+        container.appendChild(consoleBody);
+
+        this._game.console.messages.forEach((msg) => {
+            this._game.console.renderMessage(consoleBody, msg);
+        })
     }
 
     public get game(): Game { return this._game; }
@@ -209,6 +233,19 @@ export class BuildingButtonController implements ButtonController {
 
     handleClick(model: BuildingType | null): void {
         this._game.bld.buyBuilding(model?.name);
+
+        if(model.unlocks) {
+            this._game.unlock(model.unlocks);
+        }
+
+        if(model.name == 'hut') {
+            // Adds a timer from when the user buys a hut, until the villager arrives to the village
+            window.setInterval(() => {
+                this._game.console.pushMessage('A villager has joined your civilization')
+                this._game.res.increment('villagers', 1);
+            }, 10000)
+        }
+
         this._game.render();
     }
 }
@@ -248,6 +285,12 @@ export class StoneButtonController implements ButtonController {
 
     handleClick(): void {
         this._game.res.increment('stone', 1);
+
+        // Mining stone will randomly give you some ore to smelt
+        const rand = Math.random()
+        if(rand < this._game.getEffect('orePercentageBase'))
+            this._game.res.increment('ore', 1)
+
         this._game.render();
     }
 

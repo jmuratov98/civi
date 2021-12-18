@@ -23,6 +23,12 @@ export class ResourceManager extends Manager {
     }, {
         name: 'stone',
         label: 'Stone',
+    }, {
+        name: 'villagers',
+        label: 'Villagers'
+    }, {
+        name: 'ore',
+        label: 'Ore'
     }];
 
     readonly _resources: ResourceMapType;
@@ -52,7 +58,7 @@ export class ResourceManager extends Manager {
 
     increment(resName: string, amount: number): void {
         const res = this._resources[resName];
-        if(res.amount + amount <= 5000)
+        if(res.amount + amount <= this._game.getEffect(res.name + 'Max'))
             res.amount += amount;
     }
 

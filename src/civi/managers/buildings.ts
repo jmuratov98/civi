@@ -17,6 +17,7 @@ export interface BuildingType {
    effects: Record<string, number>;
    amount?: number;
    unlocked?: boolean;
+   unlocks?: Record<string, string[]>
 }
 
 type BuildingMapType = { [name: string]: BuildingType };
@@ -32,7 +33,7 @@ export class BuildingManager extends Manager {
     static readonly buildingsData: BuildingType[] = [{
         name: 'farm',
         label: 'Farm',
-        description: 'A farm where you can farm some food',
+        description: 'Plant some wheat to feed your population.',
         unlockRatio: 0.3,
         prices: [
             { name: 'food', amount: 10 }
@@ -41,6 +42,38 @@ export class BuildingManager extends Manager {
         effects: {
             'foodPerTickBase': 0.125,
         },
+    }, {
+        name: 'hut',
+        label: 'Hut',
+        description: 'A place for a villager to live.',
+        unlockRatio: 0.3,
+        prices: [
+            { name: 'wood', amount: 10 }
+        ],
+        priceRatio: 2.5,
+        effects: {
+            'villagersMax': 1,
+        },
+        unlocks: {
+            tabs: ['Village']
+        }
+    }, {
+        name: 'library',
+        label: 'Library',
+        description: 'A place for your villagers to study.',
+        unlockRatio: 0.3,
+        prices: [
+            { name: 'wood', amount: 25 },
+            { name: 'stone', amount: 10 }
+        ],
+        priceRatio: 1.12,
+        effects: {
+            'scienceMax': 250,
+            'scienceRatio': 0.1,
+        },
+        unlocks: {
+            tabs: ['Science']
+        }
     }];
 
     readonly _buildings: BuildingMapType;

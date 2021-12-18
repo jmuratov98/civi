@@ -7,19 +7,29 @@
         display: flex;
         justify-content: center;
         margin: .5rem 0;
+        text-transform: uppercase;
+        font-size: .75em;
+        letter-spacing: 0.1em;
     }
 }
 
-.res-row {
-    display: table-row;
-}
+.res {
+    &-row {
+        display: table-row;
 
-.res-cell {
-    display: table-cell;
-}
+        &.hidden {
+            display: none;
+        }
+    }
 
-.table-label {
-    text-transform: uppercase;
-    font-size: .75em;
-    letter-spacing: 0.1em;
+    &-cell {
+        padding: 0 2px;
+        display: table-cell;
+        width: 20%;
+    }
+
+    &-cell &-name {
+        width: 60px;
+    }
+
 }
