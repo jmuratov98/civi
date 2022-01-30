@@ -1,38 +1,67 @@
-import { Game } from '../game'
-import { Button } from '../ui';
+import React from 'react';
+
+import { Button } from '../ui/tsx/middle-column/button'
+import { FoodButtonController, WoodButtonController, StoneButtonController } from '../btn-controllers/btn-controller';
 
 export abstract class Tab {
-    protected _game: Game;
-    protected _label: string;
-    protected _id: string;
-    protected _visible: boolean;
-    protected _buttons: Button[];
+    public buttons: any[];
+    readonly name: string;
+    readonly id: string;
+    public visible: boolean;
 
-    protected constructor(label: string, id: string) {
-        this._label = label;
-        this._id = id;
-        this._visible = false;
-        this._buttons = [];
+    protected constructor(name: string, id: string) {
+        this.visible = false;
+        this.name = name;
+        this.id = id;
+        this.buttons = [];
     }
 
-    abstract render(container: HTMLElement): void;
+    abstract update(): void;
+}
 
-    update(): void {
-        for(let i = 0; i < this._buttons.length; i++) {
-            const button = this._buttons[i];
-            button.update();
-        }
+export class CivilizationTab extends Tab {
+    public constructor() {
+        super('Civilization', 'civilization');
+        this.visible = true;
+        this.addCoreButtons()
     }
 
-    set game(game: Game) { this._game = game; }
-    get game(): Game { return this._game; }
+    public update(): void {
+        this.buttons = [];
 
-    set visible(enabled: boolean) { this._visible = enabled; }
-    get visible(): boolean { return this._visible; }
+        this.addCoreButtons()
+    }
 
-    set label(label: string) { this._label = label; }
-    get label(): string { return this._label; }
+    private addCoreButtons() : void {
+        const foodBtn = React.createElement(Button, { 
+            key: this.buttons.length,
+            controller: new FoodButtonController(),
+            label: 'Gather Food'
+        })
+        this.buttons.push(foodBtn);
 
-    set id(id: string) { this._id = id; }
-    get id(): string { return this._id; }
+        const woodBtn = React.createElement(Button, { 
+            key: this.buttons.length,
+            controller: new WoodButtonController(),
+            label: 'Gather Wood'
+        })
+        this.buttons.push(woodBtn);
+
+        const stoneBtn = React.createElement(Button, { 
+            key: this.buttons.length,
+            controller: new StoneButtonController(),
+            label: 'Gather Stone'
+        })
+        this.buttons.push(stoneBtn);
+    }
+}
+
+export class CivicTab extends Tab {
+    public constructor() {
+        super('Civic', 'civic');
+        this.visible = true;
+    }
+
+    public update(): void {
+    }
 }

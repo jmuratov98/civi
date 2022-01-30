@@ -1,185 +1,84 @@
-import { DesktopUI } from "./ui";
-import { Tab, CivilizationTab, VillageTab, ScienceTab, WorkshopTab, DiplomacyTab } from './tabs'
-import { ResourceManager } from './managers/resources';
-import { BuildingManager } from './managers/buildings';
+import { UISystem } from './ui/ui';
 
-class Console {
-    private _game: Game;
+import { Tab, CivilizationTab, CivicTab } from './tabs/tab' 
+import { ResourcesManager } from './managers/resources';
+import { BuildingsManager } from './managers/buildings';
+import { Console } from './console';
 
-    private _messages: string[]; // TODO: A message should have more data allocated to it, like date/year
-
-    constructor(game: Game) {
-        this._game = game;
-        this._messages = [];
-    }
-
-    public pushMessage(message: string): void {
-        this._messages.unshift(message);
-        this._game.render();
-    }
-
-    public clear(): void {
-        this._messages = [];
-        this._game.render();
-    }
-
-    public renderMessage(container: HTMLElement, message: string): void {
-        const msg = document.createElement('span');
-        msg.className = 'message';
-        msg.innerText = message;
-        container.appendChild(msg);
-    }
-
-    get messages(): string[] { return this._messages; }
-}
-
-export type ResourceSaveData = {
-    name: string,
-    amount: number,
-    unlocked: boolean
-}
-
-export type BuildingSaveData = {
-    name: string,
-    amount: number,
-    unlocked: boolean
-}
-
-type SaveData = {
-    resources: ResourceSaveData[],
-    buildings: BuildingSaveData[],
+interface Version {
+    major: number;
+    minor: number;
+    build: number;
+    revision: number;
 }
 
 export class Game {
-    private _ui: DesktopUI;
-    private _tabs: Tab[];
+    public static _instance: Game;
+    
+    private _ui: UISystem;
 
-    // managers
-    private _res: ResourceManager;
-    private _bld: BuildingManager;
+    readonly tabs: Tab[]
 
-    private _console: Console;
+    // Managers
+    readonly res: ResourcesManager;
+    readonly bld: BuildingsManager;
 
-    private _effects: Record<string, number>;
+    readonly console: Console;
 
-    private _ticksPerSecond = 5;
+    readonly version: Version
 
-    public constructor(ui: DesktopUI) {
-        this._ui = ui;
-        this._ui.game = this;
-
-        // managers
-        this._res = new ResourceManager(this);
-        this._bld = new BuildingManager(this);
-
-        this._tabs = [];
-        [
+    public constructor() {
+        this.tabs = [
             { className: CivilizationTab },
-            { className: VillageTab },
-            { className: ScienceTab },
-            { className: WorkshopTab },
-            { className: DiplomacyTab },
-        ].forEach(({ className }) => {
-            const tab = new className(this)
-            this._tabs.push(tab)
-        })
+            { className: CivicTab }
+        ].map(({ className }) => {
+            return new className();
+        });
 
-        this._effects = {};
+        this.res = new ResourcesManager();
+        this.bld = new BuildingsManager();
 
-        this._console = new Console(this);
-        this._console.pushMessage('Welcome to civi'); // Change this to have the civilizations name
+        this.console = new Console();
+        this.console.addMessage('Welcome to Civi');
+
+        this.version = { major: 0, minor: 0, build: 0, revision: 0 };
     }
 
     public start(): void {
         window.setInterval(() => {
             this.tick();
-        }, 1000 / this._ticksPerSecond);
+        })
     }
 
-    private tick(): void {
+    public stop(): void {}
+
+    public tick(): void {
         this.update();
     }
 
-    private update(): void {
-        this._res.update();
-        this._bld.update();
+    public update(): void {
+        for(const tab of this.tabs) {
+            tab.update();
+        }
 
-        this.updateEffects();
+        this.res.update();
+        this.bld.update();
 
-        this._ui.update();
+        this.ui.update();
     }
 
     public render(): void {
         this._ui.render();
-
-        this.update();
     }
 
-    public getEffect(effectName: string): number {
-        return this._effects[effectName] || 0;
+    static get instance(): Game { 
+        if(!Game._instance)
+            Game._instance = new Game();
+        return Game._instance;
     }
 
-    public updateEffects(): void {
-        this._effects = {};
-
-        this.bld.updateEffectsCached();
-    }
-
-    public stringifyEffect(effectName: string): string { 
-        if(effectName === 'foodPerTickBase') return 'Food per tick';
-        if(effectName === 'villagersMax') return 'Max villagers';
-        if(effectName === 'scienceMax') return 'Max science';
-        if(effectName === 'scienceRatio') return 'Science bonus';
-    }
-
-    public save(): void {
-        const saveData: SaveData = {
-            resources: this.res.save(),
-            buildings: this.bld.save()
-        };
-
-        const saveDataString = JSON.stringify(saveData);
-        window.localStorage.setItem('civi.savedata', saveDataString);
-    }
-
-    public load(): void {
-        const dataString: string = window.localStorage.getItem('civi.savedata');
-        if(!dataString) 
-            return;
-            
-        const { resources, buildings} = JSON.parse(dataString);
-        this.res.load(resources);
-        this.bld.load(buildings);
-    }
-
-    public wipe(): void {
-        window.localStorage.removeItem('civi.savedata');
-        window.location.reload();
-    }
-
-    public unlock(unlocks: Record<string, string[]>): void {
-        if(unlocks.tabs) {
-            const { tabs: tabsNames } = unlocks;
-            for(let i = 0; i < tabsNames.length; i++) {
-                const tabName = tabsNames[i];
-
-                const tabIndex = this._tabs.findIndex(tab => tab.id === tabName);
-                const tab = this._tabs[tabIndex];
-                if(tab.visible)
-                    continue;
-                tab.visible = true;
-                
-            }
-        }
-    }
-
-    get tabs(): Tab[] { return this._tabs; }
-
-    get res(): ResourceManager { return this._res; }
-    get bld(): BuildingManager { return this._bld; }
-    get effects(): Record<string, number> { return this._effects; }
-    
-    get console(): Console { return this._console; }
-
-    get tickrate(): number { return this._ticksPerSecond}
+    public set ui(ui: UISystem) { this._ui = ui; }
+    public get ui(): UISystem { return this._ui; }
 }
+
+export const game = Game.instance;

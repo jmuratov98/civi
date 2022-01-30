@@ -10,12 +10,12 @@
     &__brand {
         padding-left: 1rem;
         
-        &-title {
+        strong {
             font-weight: 600;
             letter-spacing: 0.05rem;
         }
         
-        &-subtitle {
+        small {
             font-size: small;
         }
     }

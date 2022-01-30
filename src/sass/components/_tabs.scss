@@ -1,22 +1,30 @@
 .tabs {
     display: flex;
-    justify-content: center;
-    margin: 0.5rem 0;
-    
-    & span {
-        padding: 0 5px;
-    }
+    align-items: stretch;
+    white-space: nowrap;
+    margin: 1rem 0;
 
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 
 .tab {
     cursor: pointer;
-}
 
-.tab-content {
-    padding: 15px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    &.is-active {
+        cursor: default;
+        border-bottom: 1px solid gray;
+    }
 
+    & + & {
+        margin-left: .5rem;
+    }
+
+    &__content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
 }
