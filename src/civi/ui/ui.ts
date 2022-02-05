@@ -7,11 +7,26 @@ import { MiddleColumn } from './tsx/middle-column/middle-column'
 import { RightColumn } from './tsx/right-column/right-column'
 
 export abstract class UISystem {
+    protected themes: string[]
+    protected activeTheme: string;
+    protected defaultTheme: string;
+
+    constructor() {}
+    
     abstract render(): void;
     abstract update(): void;
 }
 
-export class DesktopUI implements UISystem {
+export class DesktopUI extends UISystem {
+    constructor() {
+        super();
+
+        // Future use
+        this.themes = ['default'];
+        this.defaultTheme = 'default';
+        this.activeTheme = 'default';
+    }
+
     render(): void {
         this.renderLeftColumn();
         this.renderMiddleColumn();
@@ -22,7 +37,9 @@ export class DesktopUI implements UISystem {
     }
 
     public update(): void {
-        this.renderLeftColumn();      
+        this.renderLeftColumn();
+        this.renderMiddleColumn();
+        this.renderRightColumn();    
     }
 
     private renderTopbar(): void {

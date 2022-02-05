@@ -17,14 +17,22 @@
                     <a href="https://josephmuratov.com">Joseph Muratov</a>
                 </small>
             </div>
-            <div class="navbar__menu"></div>
+            <div class="navbar__menu">
+                <div class="navbar__end">
+                    <div class="navbar__item" id="wipe-btn">Wipe</div>
+                    <div class="navbar__item" id="save-btn">Save</div>
+                </div>
+            </div>
             <div class="navbar__version">v0.0.0.0</div>
         </nav>
     </header>
-    <main class="game columns">
-        <div class="column" id="left-column"></div>
-        <div class="column" id="middle-column"></div>
-        <div class="column" id="right-column"></div>
+    <main class="game">
+        <div id="tooltip-container"></div>
+        <div class="columns">
+            <div class="column" id="left-column"></div>
+            <div class="column" id="middle-column"></div>
+            <div class="column" id="right-column"></div>
+        </div>
     </main>
     <footer class="footer"></footer>
 </body>

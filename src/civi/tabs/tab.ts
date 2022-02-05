@@ -1,7 +1,13 @@
 import React from 'react';
 
-import { Button } from '../ui/tsx/middle-column/button'
-import { FoodButtonController, WoodButtonController, StoneButtonController } from '../btn-controllers/btn-controller';
+import { game } from '../game';
+import { Button, ButtonProps } from '../ui/tsx/middle-column/button';
+import {
+    FoodButtonController,
+    WoodButtonController,
+    StoneButtonController,
+    BuildingButtonController
+} from '../btn-controllers/btn-controller';
 
 export abstract class Tab {
     public buttons: any[];
@@ -17,6 +23,13 @@ export abstract class Tab {
     }
 
     abstract update(): void;
+
+    protected createButton(props: ButtonProps): React.FunctionComponentElement<ButtonProps> {
+        return React.createElement(Button, {
+            key: this.buttons.length,
+            ...props
+        })
+    }
 }
 
 export class CivilizationTab extends Tab {
@@ -29,28 +42,43 @@ export class CivilizationTab extends Tab {
     public update(): void {
         this.buttons = [];
 
-        this.addCoreButtons()
+        this.addCoreButtons();
+
+        for(const bldName in game.bld.buildings) {
+            const bld = game.bld.buildings[bldName];
+
+            if(!bld.unlocked)
+                continue;
+
+            const button = this.createButton({
+                controller: new BuildingButtonController(),
+                label: bld.label,
+                model: bld,
+                description: bld.description,
+            });
+            this.buttons.push(button);
+        }
     }
 
     private addCoreButtons() : void {
-        const foodBtn = React.createElement(Button, { 
-            key: this.buttons.length,
+        const foodBtn = this.createButton({ 
             controller: new FoodButtonController(),
-            label: 'Gather Food'
+            label: 'Gather Food',
+            description: 'Gather some food for the villagers to eat',
         })
         this.buttons.push(foodBtn);
 
-        const woodBtn = React.createElement(Button, { 
-            key: this.buttons.length,
+        const woodBtn = this.createButton({ 
             controller: new WoodButtonController(),
-            label: 'Gather Wood'
+            label: 'Chop Wood',
+            description: 'Chop some wood to build',
         })
         this.buttons.push(woodBtn);
 
-        const stoneBtn = React.createElement(Button, { 
-            key: this.buttons.length,
+        const stoneBtn = this.createButton({ 
             controller: new StoneButtonController(),
-            label: 'Gather Stone'
+            label: 'Mine Stone',
+            description: 'Mine stone to build'
         })
         this.buttons.push(stoneBtn);
     }

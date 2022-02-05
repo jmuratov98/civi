@@ -9,7 +9,6 @@ interface TabContentProps {
 export function TabContent({ 
     buttons
 }: TabContentProps): JSX.Element {
-    console.log(buttons)
     return (
         <div className="tab__content">
             {buttons}

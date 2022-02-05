@@ -1,42 +1,40 @@
+import { game, SaveDataInfo } from '../game';
+import { fixFloatingPoint } from '../utils';
+import { Manager } from './managers';
+
 export interface Resource {
     name: string;
     label: string;
     amount?: number;
     unlocked?: boolean;
 }
-export class ResourcesManager {
+export class ResourcesManager extends Manager<Resource> {
 
-    readonly resources: Record<string, Resource> = {
-        food: {
+    readonly resourceData: Resource[] = [
+        {
             name: 'food',
             label: 'Food',
         },
-        wood: {
+        {
             name: 'wood',
             label: 'Wood',
         },
-        stone: {
+        {
             name: 'stone',
             label: 'Stone',
         },
-        villager: {
+        {
             name: 'villager',
             label: 'Villager',
-        },
-        ore: {
+        }, {
             name: 'ore',
             label: 'Ore'
         }
-    }
+    ]
 
     public constructor() {
-        for(const resName in this.resources) {
-            const res = this.resources[resName];
-
-            res.amount = 0;
-            res.unlocked = false;
-            console.log(this.resources)
-        }
+        super();
+        this.initMetaData();
     }
 
     public increment(name: string, amount: number): void {
@@ -50,6 +48,49 @@ export class ResourcesManager {
             if(!res.unlocked && res.amount > 0) res.unlocked = true
 
             // Calculate the per tick here
+            const perTick = game.getEffect(`${res.name}PerTickBase`);
+            this.resources[resName].amount += fixFloatingPoint(perTick);  
+
+            const resMax = game.getEffect(`${res.name}Max`);
+            if(res.amount > resMax) {
+                res.amount = resMax
+            }
         }
     }
+
+    protected initMetaData(): void {
+        for(let i = 0; i < this.resourceData.length; i++) {
+            const res = this.resourceData[i];
+            res.amount = 0;
+            res.unlocked = false;
+            
+            this.meta.meta[res.name] = res;
+        }
+    }
+
+    public getEffect(data: Resource, effectName: string): number { return 0; }
+
+    public save(): SaveDataInfo[] {
+        const data: SaveDataInfo[] = [];
+        for (const resName in this.meta.meta) {
+            const res = this.meta.meta[resName];
+            data.push({
+                name: res.name,
+                amount: res.amount,
+                unlocked: res.unlocked,
+            })
+        }
+        return data;
+    }
+    
+    public load(resources: SaveDataInfo[]): void {
+        for(let i = 0; i < resources.length; i++) {
+            const res = resources[i];
+            
+            this.meta.meta[res.name].amount = res.amount;
+            this.meta.meta[res.name].unlocked = res.unlocked;
+        }
+    }
+
+    public get resources(): Record<string, Resource> { return this.meta.meta; }
 }

@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { game } from '../../../game'
-import { Resource } from '../../../managers/resources'
+import { game } from '../../../game';
+import { Resource } from '../../../managers/resources';
+import { fixFloatingPoint } from '../../../utils';
 
 interface ResourceRowProps {
     res: Resource
@@ -12,9 +13,9 @@ export function ResourceRow({
     return (
         <tr className={`res-row ${res.unlocked ? '' : 'hidden'}`} id={`${res.name}`}>
             <td className="res-cell res-name">{res.label}</td>
-            <td className="res-cell res-amount">{res.amount}</td>
-            <td className="res-cell res-max">0</td>
-            <td className="res-cell res-persec">0</td>
+            <td className="res-cell res-amount">{fixFloatingPoint(res.amount)}</td>
+            <td className="res-cell res-max">{game.getEffect(`${res.name}Max`)}</td>
+            <td className="res-cell res-persec">{game.getEffect(`${res.name}PerTickBase`)}</td>
         </tr>
     )
 }
