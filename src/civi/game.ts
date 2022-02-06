@@ -139,6 +139,8 @@ export class Game {
     }
 
     public wipe(): void {
+        window.localStorage.removeItem('civi.savedata');
+        window.location.reload();
     }
 
     public set ui(ui: UISystem) { this._ui = ui; }
