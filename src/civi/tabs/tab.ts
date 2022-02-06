@@ -1,38 +1,95 @@
-import { Game } from '../game'
-import { Button } from '../ui';
+import React from 'react';
+
+import { game } from '../game';
+import { Button, ButtonProps } from '../ui/tsx/middle-column/button';
+import {
+    FoodButtonController,
+    WoodButtonController,
+    StoneButtonController,
+    BuildingButtonController
+} from '../btn-controllers/btn-controller';
 
 export abstract class Tab {
-    protected _game: Game;
-    protected _label: string;
-    protected _id: string;
-    protected _visible: boolean;
-    protected _buttons: Button[];
+    public buttons: any[];
+    readonly name: string;
+    readonly id: string;
+    public visible: boolean;
 
-    protected constructor(label: string, id: string) {
-        this._label = label;
-        this._id = id;
-        this._visible = false;
-        this._buttons = [];
+    protected constructor(name: string, id: string) {
+        this.visible = false;
+        this.name = name;
+        this.id = id;
+        this.buttons = [];
     }
 
-    abstract render(container: HTMLElement): void;
+    abstract update(): void;
 
-    update(): void {
-        for(let i = 0; i < this._buttons.length; i++) {
-            const button = this._buttons[i];
-            button.update();
+    protected createButton(props: ButtonProps): React.FunctionComponentElement<ButtonProps> {
+        return React.createElement(Button, {
+            key: this.buttons.length,
+            ...props
+        })
+    }
+}
+
+export class CivilizationTab extends Tab {
+    public constructor() {
+        super('Civilization', 'civilization');
+        this.visible = true;
+        this.addCoreButtons()
+    }
+
+    public update(): void {
+        this.buttons = [];
+
+        this.addCoreButtons();
+
+        for(const bldName in game.bld.buildings) {
+            const bld = game.bld.buildings[bldName];
+
+            if(!bld.unlocked)
+                continue;
+
+            const button = this.createButton({
+                controller: new BuildingButtonController(),
+                label: bld.label,
+                model: bld,
+                description: bld.description,
+            });
+            this.buttons.push(button);
         }
     }
 
-    set game(game: Game) { this._game = game; }
-    get game(): Game { return this._game; }
+    private addCoreButtons() : void {
+        const foodBtn = this.createButton({ 
+            controller: new FoodButtonController(),
+            label: 'Gather Food',
+            description: 'Gather some food for the villagers to eat',
+        })
+        this.buttons.push(foodBtn);
 
-    set visible(enabled: boolean) { this._visible = enabled; }
-    get visible(): boolean { return this._visible; }
+        const woodBtn = this.createButton({ 
+            controller: new WoodButtonController(),
+            label: 'Chop Wood',
+            description: 'Chop some wood to build',
+        })
+        this.buttons.push(woodBtn);
 
-    set label(label: string) { this._label = label; }
-    get label(): string { return this._label; }
+        const stoneBtn = this.createButton({ 
+            controller: new StoneButtonController(),
+            label: 'Mine Stone',
+            description: 'Mine stone to build'
+        })
+        this.buttons.push(stoneBtn);
+    }
+}
 
-    set id(id: string) { this._id = id; }
-    get id(): string { return this._id; }
+export class CivicTab extends Tab {
+    public constructor() {
+        super('Civic', 'civic');
+        this.visible = true;
+    }
+
+    public update(): void {
+    }
 }

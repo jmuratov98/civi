@@ -1,185 +1,190 @@
-import { DesktopUI } from "./ui";
-import { Tab, CivilizationTab, VillageTab, ScienceTab, WorkshopTab, DiplomacyTab } from './tabs'
-import { ResourceManager } from './managers/resources';
-import { BuildingManager } from './managers/buildings';
+import { UISystem } from './ui/ui';
 
-class Console {
-    private _game: Game;
+import { Tab, CivilizationTab, CivicTab } from './tabs/tab' 
+import { ResourcesManager } from './managers/resources';
+import { BuildingsManager } from './managers/buildings';
+import { Console } from './console';
 
-    private _messages: string[]; // TODO: A message should have more data allocated to it, like date/year
-
-    constructor(game: Game) {
-        this._game = game;
-        this._messages = [];
-    }
-
-    public pushMessage(message: string): void {
-        this._messages.unshift(message);
-        this._game.render();
-    }
-
-    public clear(): void {
-        this._messages = [];
-        this._game.render();
-    }
-
-    public renderMessage(container: HTMLElement, message: string): void {
-        const msg = document.createElement('span');
-        msg.className = 'message';
-        msg.innerText = message;
-        container.appendChild(msg);
-    }
-
-    get messages(): string[] { return this._messages; }
+export function $I(str: string): string {
+    if(str === 'foodPerTickBase') return 'Food per tick'
 }
 
-export type ResourceSaveData = {
-    name: string,
-    amount: number,
-    unlocked: boolean
+interface Version {
+    major: number;
+    minor: number;
+    build: number;
+    revision: number;
 }
 
-export type BuildingSaveData = {
-    name: string,
-    amount: number,
-    unlocked: boolean
+export interface SaveDataInfo {
+    name: string;
+    amount: number;
+    unlocked: boolean;
 }
 
-type SaveData = {
-    resources: ResourceSaveData[],
-    buildings: BuildingSaveData[],
+interface SaveData {
+    resources: SaveDataInfo[]
+    buildings: SaveDataInfo[]
 }
+
+export type Effects = Record<string, number>;
 
 export class Game {
-    private _ui: DesktopUI;
-    private _tabs: Tab[];
+    public static _instance: Game;
+    
+    private _ui: UISystem;
 
-    // managers
-    private _res: ResourceManager;
-    private _bld: BuildingManager;
+    readonly tabs: Tab[]
 
-    private _console: Console;
+    // Managers
+    readonly res: ResourcesManager;
+    readonly bld: BuildingsManager;
 
-    private _effects: Record<string, number>;
+    readonly console: Console;
 
-    private _ticksPerSecond = 5;
+    readonly version: Version;
 
-    public constructor(ui: DesktopUI) {
-        this._ui = ui;
-        this._ui.game = this;
+    // Effects
+    readonly effects: Effects;
+    readonly effectsBase: Effects;
 
-        // managers
-        this._res = new ResourceManager(this);
-        this._bld = new BuildingManager(this);
+    readonly tickRate: number;
 
-        this._tabs = [];
-        [
+    public constructor() {
+        this.tabs = [
             { className: CivilizationTab },
-            { className: VillageTab },
-            { className: ScienceTab },
-            { className: WorkshopTab },
-            { className: DiplomacyTab },
-        ].forEach(({ className }) => {
-            const tab = new className(this)
-            this._tabs.push(tab)
-        })
+            { className: CivicTab }
+        ].map(({ className }) => {
+            return new className();
+        });
 
-        this._effects = {};
+        this.res = new ResourcesManager();
+        this.bld = new BuildingsManager();
 
-        this._console = new Console(this);
-        this._console.pushMessage('Welcome to civi'); // Change this to have the civilizations name
+        this.console = new Console();
+        this.console.addMessage('Welcome to Civi');
+
+        this.version = { major: 0, minor: 0, build: 0, revision: 0 };
+
+        this.effects = {};
+        this.effectsBase = {
+            foodMax: 1000,
+            woodMax: 1000,
+            stoneMax: 1000,
+
+            oreMax: 100
+        }
+        this.initEffects();
+
+        this.tickRate = 5;
     }
 
     public start(): void {
         window.setInterval(() => {
             this.tick();
-        }, 1000 / this._ticksPerSecond);
+        }, 1000 / this.tickRate);
     }
 
-    private tick(): void {
+    public stop(): void {}
+
+    public tick(): void {
         this.update();
     }
 
-    private update(): void {
-        this._res.update();
-        this._bld.update();
+    public update(): void {
+        for(const tab of this.tabs) {
+            tab.update();
+        }
+
+        this.res.update();
+        this.bld.update();
 
         this.updateEffects();
-
-        this._ui.update();
+        
+        this.ui.update();
     }
 
     public render(): void {
         this._ui.render();
-
-        this.update();
     }
 
-    public getEffect(effectName: string): number {
-        return this._effects[effectName] || 0;
-    }
-
-    public updateEffects(): void {
-        this._effects = {};
-
-        this.bld.updateEffectsCached();
-    }
-
-    public stringifyEffect(effectName: string): string { 
-        if(effectName === 'foodPerTickBase') return 'Food per tick';
-        if(effectName === 'villagersMax') return 'Max villagers';
-        if(effectName === 'scienceMax') return 'Max science';
-        if(effectName === 'scienceRatio') return 'Science bonus';
+    public getEffect(name: string): number {
+        return this.effects[name] || 0
     }
 
     public save(): void {
         const saveData: SaveData = {
             resources: this.res.save(),
             buildings: this.bld.save()
-        };
+        }
 
-        const saveDataString = JSON.stringify(saveData);
-        window.localStorage.setItem('civi.savedata', saveDataString);
+        console.log('saving...');
+        this.console.addMessage('Saving...')
+        const stringified = JSON.stringify(saveData);
+        window.localStorage.setItem('civi.savedata', stringified);
     }
 
     public load(): void {
-        const dataString: string = window.localStorage.getItem('civi.savedata');
-        if(!dataString) 
+        const dataString = window.localStorage.getItem('civi.savedata');
+        if(!dataString) {
+            console.info("Didn't load anything from local storage, creating new game")
             return;
-            
-        const { resources, buildings} = JSON.parse(dataString);
+        } 
+
+        this.console.addMessage('Loading from local storage...');
+        const { resources, buildings } = JSON.parse(dataString);
+
         this.res.load(resources);
         this.bld.load(buildings);
     }
 
     public wipe(): void {
-        window.localStorage.removeItem('civi.savedata');
-        window.location.reload();
     }
 
-    public unlock(unlocks: Record<string, string[]>): void {
-        if(unlocks.tabs) {
-            const { tabs: tabsNames } = unlocks;
-            for(let i = 0; i < tabsNames.length; i++) {
-                const tabName = tabsNames[i];
+    public set ui(ui: UISystem) { this._ui = ui; }
+    public get ui(): UISystem { return this._ui; }
 
-                const tabIndex = this._tabs.findIndex(tab => tab.id === tabName);
-                const tab = this._tabs[tabIndex];
-                if(tab.visible)
-                    continue;
-                tab.visible = true;
-                
+    static get instance(): Game { 
+        if(!Game._instance)
+            Game._instance = new Game();
+        return Game._instance;
+    }
+
+    private initEffects(): void {
+        // Get all effects from the buildings
+        for(const bldName in this.bld.buildings) {
+            const effect = this.bld.buildings[bldName].effects;
+            for(const effectName in effect) {
+                this.effects[effectName] = 0;
             }
+        }
+
+        // Gets all base effects
+        for(const effectName in this.effectsBase) {
+            this.effects[effectName] = this.effectsBase[effectName]
         }
     }
 
-    get tabs(): Tab[] { return this._tabs; }
+    private updateEffects(): void {
+        for(const effectName in this.effects) {
+            let effect = 0;
+            for(const bldName in this.bld.buildings) {
+                const bld = this.bld.buildings[bldName];
+                for(const en in bld.effects) {
+                    if(effectName == en) {
+                        effect += this.bld.getEffect(bld, effectName);
+                    }
+                }
+            }
 
-    get res(): ResourceManager { return this._res; }
-    get bld(): BuildingManager { return this._bld; }
-    get effects(): Record<string, number> { return this._effects; }
-    
-    get console(): Console { return this._console; }
+            if(effectName in this.effectsBase) {
+                effect += this.effectsBase[effectName]
+            }
 
-    get tickrate(): number { return this._ticksPerSecond}
+            this.effects[effectName] = effect;
+        }
+
+    }
 }
+
+export const game = Game.instance;

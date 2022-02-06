@@ -11,39 +11,29 @@
     <header class="header">
         <nav class="navbar">
             <div class="navbar__brand">
-                <strong class="navbar__brand-title">Civi</strong>
-                <small class="navbar__brand-subtitle">by 
-                    <a class="navbar__brand-link" href="https://josephmuratov.com">Joseph Muratov</a>
+                <strong>Civi</strong>
+                <small>
+                    by
+                    <a href="https://josephmuratov.com">Joseph Muratov</a>
                 </small>
             </div>
-
             <div class="navbar__menu">
                 <div class="navbar__end">
-                    <span class="navbar__item" id="wipe-btn">Wipe</span>
-                    <span class="navbar__item" id="save-btn">Save</span>
+                    <div class="navbar__item" id="wipe-btn">Wipe</div>
+                    <div class="navbar__item" id="save-btn">Save</div>
                 </div>
             </div>
-
-            <div class="navbar__version">
-                v0.0.0.0
-            </div>
+            <div class="navbar__version">v0.0.0.0</div>
         </nav>
     </header>
-
     <main class="game">
-        <div class="tooltip" id="tooltip" style="display: none"></div>
+        <div id="tooltip-container"></div>
         <div class="columns">
             <div class="column" id="left-column"></div>
-            <div class="column" id="middle-column">
-                <div id="game-container"></div>
-            </div>
-            <div class="column" id="right-column">
-                <div class="console" id="console-container"></div>
-            </div>
+            <div class="column" id="middle-column"></div>
+            <div class="column" id="right-column"></div>
         </div>
     </main>
-
-    <!-- TODO: Add stuff later -->
     <footer class="footer"></footer>
 </body>
 </html>

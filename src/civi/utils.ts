@@ -14,7 +14,7 @@ export function incrementCssVariable(el: HTMLElement, prop: string, inc: number)
     setCssVariable(el, prop, (getCssVariable(el, prop) + inc).toString())
 }
 
-export function fixFloatingPointNumber(num: number): number { 
+export function fixFloatingPoint(num: number): number {
     let numAdjusted = Math.floor(num * 10000000) / 10000000;
     if(Math.round(num - numAdjusted) * 10000000) {
         numAdjusted = Math.floor((num + 0.000000000000010) * 10000000) / 10000000;

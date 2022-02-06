@@ -1,0 +1,40 @@
+.res {
+
+    &-container {
+        margin: 1rem;
+    }
+
+    &-table {
+        display: table;
+        width: 100%;
+    }
+
+    &-row {
+        display: table-row;
+
+        &.hidden {
+            display: none;
+        }
+    }
+
+    &-cell {
+        padding: 0 2px;
+        display: table-cell;
+        width: 20%;
+    }
+
+    &-max {
+        &:before {
+            color: #777;
+            content: "/"
+        }
+    }
+
+    &-persec {
+        &::after {
+            color: #777;
+            content: "/tick"
+        }
+    }
+
+}

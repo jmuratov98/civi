@@ -1,94 +1,96 @@
-import { Game, ResourceSaveData } from '../game'
-import { fixFloatingPointNumber } from '../utils';
-import { Manager } from './manager';
+import { game, SaveDataInfo } from '../game';
+import { fixFloatingPoint } from '../utils';
+import { Manager } from './managers';
 
-export interface ResourceObjectType {
+export interface Resource {
     name: string;
     label: string;
     amount?: number;
     unlocked?: boolean;
 }
+export class ResourcesManager extends Manager<Resource> {
 
-type ResourceMapType = {
-    [name: string]: ResourceObjectType
-}
+    readonly resourceData: Resource[] = [
+        {
+            name: 'food',
+            label: 'Food',
+        },
+        {
+            name: 'wood',
+            label: 'Wood',
+        },
+        {
+            name: 'stone',
+            label: 'Stone',
+        },
+        {
+            name: 'villager',
+            label: 'Villager',
+        }, {
+            name: 'ore',
+            label: 'Ore'
+        }
+    ]
 
-export class ResourceManager extends Manager {
-    static readonly resData: ResourceObjectType[] = [{
-        name: 'food',
-        label: 'Food',
-    }, {
-        name: 'wood',
-        label: 'Wood',
-    }, {
-        name: 'stone',
-        label: 'Stone',
-    }, {
-        name: 'villagers',
-        label: 'Villagers'
-    }, {
-        name: 'ore',
-        label: 'Ore'
-    }];
+    public constructor() {
+        super();
+        this.initMetaData();
+    }
 
-    readonly _resources: ResourceMapType;
+    public increment(name: string, amount: number): void {
+        this.resources[name].amount += amount
+    }
 
-    constructor(game: Game) {
-        super(game)
-        this._resources = {};
-        for(let i = 0; i < ResourceManager.resData.length; i++) {
-            const res = ResourceManager.resData[i]
+    public update(): void {
+        for(const resName in this.resources) {
+            const res = this.resources[resName];
+
+            if(!res.unlocked && res.amount > 0) res.unlocked = true
+
+            // Calculate the per tick here
+            const perTick = game.getEffect(`${res.name}PerTickBase`);
+            this.resources[resName].amount += fixFloatingPoint(perTick);  
+
+            const resMax = game.getEffect(`${res.name}Max`);
+            if(res.amount > resMax) {
+                res.amount = resMax
+            }
+        }
+    }
+
+    protected initMetaData(): void {
+        for(let i = 0; i < this.resourceData.length; i++) {
+            const res = this.resourceData[i];
             res.amount = 0;
-            res.unlocked = false
-            this._resources[res.name] = res;
+            res.unlocked = false;
+            
+            this.meta.meta[res.name] = res;
         }
     }
 
-    update(): void {
-        for (const name in this._resources) {
-            const res = this._resources[name];
+    public getEffect(data: Resource, effectName: string): number { return 0; }
 
-            if(!res.unlocked && res.amount > 0) res.unlocked = true;
-
-            const pertick = this.getResourcePerRick(name);
-            this.increment(res.name, pertick);   
-            res.amount = fixFloatingPointNumber(res.amount)         
-        }
-    }
-
-    increment(resName: string, amount: number): void {
-        const res = this._resources[resName];
-        if(res.amount + amount <= this._game.getEffect(res.name + 'Max'))
-            res.amount += amount;
-    }
-
-    public save(): ResourceSaveData[] {
-        const resources: ResourceSaveData[] = [];
-        for(let i = 0; i < ResourceManager.resData.length; i++) {
-            const res = ResourceManager.resData[i];
-            console.log(res);
-            const saveRes: ResourceSaveData = {
+    public save(): SaveDataInfo[] {
+        const data: SaveDataInfo[] = [];
+        for (const resName in this.meta.meta) {
+            const res = this.meta.meta[resName];
+            data.push({
                 name: res.name,
                 amount: res.amount,
-                unlocked: res.unlocked
-            }
-            resources.push(saveRes);
+                unlocked: res.unlocked,
+            })
         }
-        return resources;
+        return data;
     }
-
-    public load(resources: ResourceSaveData[]): void {
+    
+    public load(resources: SaveDataInfo[]): void {
         for(let i = 0; i < resources.length; i++) {
             const res = resources[i];
-            this._resources[res.name].amount = res.amount
-            this._resources[res.name].unlocked = res.unlocked
+            
+            this.meta.meta[res.name].amount = res.amount;
+            this.meta.meta[res.name].unlocked = res.unlocked;
         }
     }
 
-    private getResourcePerRick(resName: string): number {
-        return this._game.getEffect(resName + 'PerTickBase')
-    }
-
-    get resources(): ResourceMapType { return this._resources; }
-
+    public get resources(): Record<string, Resource> { return this.meta.meta; }
 }
