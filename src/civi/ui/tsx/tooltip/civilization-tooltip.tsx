@@ -1,5 +1,6 @@
 import React from 'react';
-import { game, Effects, $I } from '../../../game';
+import { game, Effects } from '../../../game';
+import { $I } from '../../../i18n';
 
 import { Building, Price } from '../../../managers/buildings';
 import { Resource } from '../../../managers/resources';
@@ -53,7 +54,7 @@ function PriceSection({
         minutes %= 60;
 
         return Number.isFinite(seconds) && (
-            <div>( {hours} h {minutes} m {seconds} s )</div>
+            <div>( {hours} {$I('unit.h')} {minutes} {$I('unit.m')} {seconds} {$I('unit.s')} )</div>
         )
     }
 
@@ -116,7 +117,7 @@ function EffectSection({
         <TooltipSection label='effects'>
             {Object.entries(model.effects).map(([effectName, effectValue], i: number) => (
                 <div className="tooltip__price">
-                    <span>{$I(effectName)}</span>
+                    <span>{$I('effectsManager.' + effectName)}</span>
                     <span>{effectValue}</span>
                 </div>
             ))}

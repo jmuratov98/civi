@@ -8,6 +8,7 @@ import {
     StoneButtonController,
     BuildingButtonController
 } from '../btn-controllers/btn-controller';
+import { $I } from '../i18n';
 
 export abstract class Tab {
     public buttons: any[];
@@ -20,6 +21,7 @@ export abstract class Tab {
         this.name = name;
         this.id = id;
         this.buttons = [];
+        console.log(this.name);
     }
 
     abstract update(): void;
@@ -34,7 +36,7 @@ export abstract class Tab {
 
 export class CivilizationTab extends Tab {
     public constructor() {
-        super('Civilization', 'civilization');
+        super($I('tab.civilization.label'), 'civilization');
         this.visible = true;
         this.addCoreButtons()
     }
@@ -63,22 +65,23 @@ export class CivilizationTab extends Tab {
     private addCoreButtons() : void {
         const foodBtn = this.createButton({ 
             controller: new FoodButtonController(),
-            label: 'Gather Food',
-            description: 'Gather some food for the villagers to eat',
+            label: $I('resource.food.button'),
+            description: $I('resource.food.description'),
         })
         this.buttons.push(foodBtn);
 
         const woodBtn = this.createButton({ 
             controller: new WoodButtonController(),
-            label: 'Chop Wood',
-            description: 'Chop some wood to build',
+            label: $I('resource.wood.button'),
+            description: $I('resource.wood.description'),
         })
         this.buttons.push(woodBtn);
 
         const stoneBtn = this.createButton({ 
             controller: new StoneButtonController(),
-            label: 'Mine Stone',
-            description: 'Mine stone to build'
+            label: $I('resource.stone.button'),
+            description: $I('resource.stone.description'),
+
         })
         this.buttons.push(stoneBtn);
     }
@@ -86,7 +89,7 @@ export class CivilizationTab extends Tab {
 
 export class CivicTab extends Tab {
     public constructor() {
-        super('Civic', 'civic');
+        super($I('tab.civic.label'), 'civic');
         this.visible = true;
     }
 
