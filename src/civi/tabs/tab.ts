@@ -21,7 +21,6 @@ export abstract class Tab {
         this.name = name;
         this.id = id;
         this.buttons = [];
-        console.log(this.name);
     }
 
     abstract update(): void;

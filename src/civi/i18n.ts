@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 
-import en from './locales/en.json'
+import en from '../assets/locales/en.json';
 
 type i18Callback = (err: any) => void
 

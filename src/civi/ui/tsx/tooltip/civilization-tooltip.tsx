@@ -1,5 +1,5 @@
 import React from 'react';
-import { game, Effects } from '../../../game';
+import { game } from '../../../game';
 import { $I } from '../../../i18n';
 
 import { Building, Price } from '../../../managers/buildings';

@@ -21,7 +21,7 @@ export function TabsContainer(): JSX.Element {
     return (
         <div id="tabs-container">
             <div className="tabs" role='tablist' aria-orientation='horizontal'>
-                {game.tabs.map((tab: Tab) => (
+                {game.tabs.filter(tab => tab.visible).map((tab: Tab) => (
                     <span 
                         className={`tab${activeTab === tab.id ? ' is-active' : ''}`}
                         id={tab.id}
