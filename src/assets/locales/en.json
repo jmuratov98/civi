@@ -1,0 +1,62 @@
+{
+    "translation": {
+        "game": {
+            "welcome": "Welcome to Civi",
+            "save": "Saving...",
+            "load": "Loading..."
+        },
+        
+        "resource": {
+            "food": {
+                "label": "Food",
+                "button": "Gather Food",
+                "description": "Gather some food to feed your villagers"
+            },
+            "wood": {
+                "label": "Wood",
+                "button": "Chop Wood",
+                "description": "Chop some wood to build buildings"
+            },
+            "stone": {
+                "label": "Stone",
+                "button": "Mine Wood",
+                "description": "Mine some stone to build buildings"
+            },
+            "villager": {
+                "label": "Villager"
+            }, 
+            "ore": {
+                "label": "Ore"
+            }
+        },
+
+        "building": {
+            "farm": {
+                "label": "Farm",
+                "description": "Plant some wheat to feed your population"
+            }
+        },
+
+        "tab": {
+            "civilization": {
+                "label": "Civilization"
+            },
+            "civic": {
+                "label": "Civic"
+            }
+        },
+
+        "effectsManager": {
+            "foodPerTickBase": "Food per tick"
+        },
+        
+        "unit": {
+            "h": "h",
+            "hour": "hour",
+            "m": "m",
+            "min": "min",
+            "s": "s",
+            "sec": "sec"
+        }
+    }
+}

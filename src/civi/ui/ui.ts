@@ -48,7 +48,7 @@ export class DesktopUI extends UISystem {
         } = game;
 
         const versionDom = document.querySelector('.navbar__version');
-        versionDom.innerHTML = `v${major}.${minor}.${build}.${revision}`        
+        versionDom.innerHTML = `v${major}.${minor}.${build}.${revision}`
     }
 
     private renderLeftColumn(): void {

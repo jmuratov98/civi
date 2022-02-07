@@ -4,10 +4,7 @@ import { Tab, CivilizationTab, CivicTab } from './tabs/tab'
 import { ResourcesManager } from './managers/resources';
 import { BuildingsManager } from './managers/buildings';
 import { Console } from './console';
-
-export function $I(str: string): string {
-    if(str === 'foodPerTickBase') return 'Food per tick'
-}
+import { $I } from './i18n';
 
 interface Version {
     major: number;
@@ -34,23 +31,25 @@ export class Game {
     
     private _ui: UISystem;
 
-    readonly tabs: Tab[]
+    public tabs: Tab[]
 
     // Managers
-    readonly res: ResourcesManager;
-    readonly bld: BuildingsManager;
+    public res: ResourcesManager;
+    public bld: BuildingsManager;
 
-    readonly console: Console;
+    public console: Console;
 
-    readonly version: Version;
+    public version: Version;
 
     // Effects
-    readonly effects: Effects;
-    readonly effectsBase: Effects;
+    public effects: Effects;
+    public effectsBase: Effects;
 
-    readonly tickRate: number;
+    public tickRate: number;
 
-    public constructor() {
+    public constructor() {}
+
+    public init(): void {
         this.tabs = [
             { className: CivilizationTab },
             { className: CivicTab }
@@ -62,7 +61,7 @@ export class Game {
         this.bld = new BuildingsManager();
 
         this.console = new Console();
-        this.console.addMessage('Welcome to Civi');
+        this.console.addMessage($I('game.welcome'));
 
         this.version = { major: 0, minor: 0, build: 0, revision: 0 };
 
@@ -119,7 +118,7 @@ export class Game {
         }
 
         console.log('saving...');
-        this.console.addMessage('Saving...')
+        this.console.addMessage($I('game.save'))
         const stringified = JSON.stringify(saveData);
         window.localStorage.setItem('civi.savedata', stringified);
     }
@@ -131,7 +130,7 @@ export class Game {
             return;
         } 
 
-        this.console.addMessage('Loading from local storage...');
+        this.console.addMessage($I('game.load'));
         const { resources, buildings } = JSON.parse(dataString);
 
         this.res.load(resources);

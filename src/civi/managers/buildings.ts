@@ -1,4 +1,5 @@
 import { game, SaveDataInfo } from '../game';
+import { $I } from '../i18n';
 import { fixFloatingPoint } from '../utils';
 import { Manager } from './managers';
 
@@ -24,8 +25,8 @@ export class BuildingsManager extends Manager<Building> {
     readonly buildingsData: Building[] = [
         {
             name: 'farm',
-            label: 'Farm',
-            description: 'Plant some wheat to feed your population.',
+            label: $I('building.farm.label'),
+            description: $I('building.farm.description'),
             unlockRatio: 0.3,
             prices: [
                 { name: 'food', amount: 10 }

@@ -1,4 +1,5 @@
 import { game, SaveDataInfo } from '../game';
+import { $I } from '../i18n';
 import { fixFloatingPoint } from '../utils';
 import { Manager } from './managers';
 
@@ -13,22 +14,22 @@ export class ResourcesManager extends Manager<Resource> {
     readonly resourceData: Resource[] = [
         {
             name: 'food',
-            label: 'Food',
+            label: $I('resource.food.label'),
         },
         {
             name: 'wood',
-            label: 'Wood',
+            label: $I('resource.wood.label'),
         },
         {
             name: 'stone',
-            label: 'Stone',
+            label: $I('resource.stone.label'),
         },
         {
             name: 'villager',
-            label: 'Villager',
+            label: $I('resource.villager.label'),
         }, {
             name: 'ore',
-            label: 'Ore'
+            label: $I('resource.ore.label'),
         }
     ]
 
