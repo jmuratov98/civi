@@ -10,16 +10,21 @@ export abstract class UISystem {
     protected themes: string[]
     protected activeTheme: string;
     protected defaultTheme: string;
+    protected _activeTab: string;
 
     constructor() {}
     
     abstract render(): void;
     abstract update(): void;
+
+    public abstract set activeTab(activeTab: string); 
 }
 
 export class DesktopUI extends UISystem {
     constructor() {
         super();
+
+        this._activeTab = 'civilization';
 
         // Future use
         this.themes = ['default'];
@@ -60,7 +65,7 @@ export class DesktopUI extends UISystem {
 
     private renderMiddleColumn(): void {
         ReactDOM.render(
-            React.createElement(MiddleColumn),
+            React.createElement(MiddleColumn, { activeTab: this._activeTab }),
             document.getElementById('middle-column')
         );
     }
@@ -70,6 +75,13 @@ export class DesktopUI extends UISystem {
             React.createElement(RightColumn),
             document.getElementById('right-column')
         );
+    }
+
+    public set activeTab(activeTab: string) {
+        if(activeTab === this._activeTab) return;
+
+        this._activeTab = activeTab;
+        this.renderMiddleColumn();
     }
 
 }

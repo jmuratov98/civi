@@ -1,6 +1,6 @@
 import { UISystem } from './ui/ui';
 
-import { Tab, CivilizationTab, CivicTab } from './tabs/tab' 
+import { Tab, CivilizationTab, CivicTab } from './tabs/tab'
 import { ResourcesManager } from './managers/resources';
 import { BuildingsManager } from './managers/buildings';
 import { Console } from './console';
@@ -24,11 +24,24 @@ interface SaveData {
     buildings: SaveDataInfo[]
 }
 
+interface KeyBind {
+    alt: boolean,
+    ctrl: boolean,
+    shift: boolean,
+    key: string,
+    name: string,
+    action: () => void;
+}
+
+interface CiviOptions {
+    keybinds: KeyBind[]
+}
+
 export type Effects = Record<string, number>;
 
 export class Game {
     public static _instance: Game;
-    
+
     private _ui: UISystem;
 
     public tabs: Tab[]
@@ -45,9 +58,11 @@ export class Game {
     public effects: Effects;
     public effectsBase: Effects;
 
+    public options: CiviOptions;
+
     public tickRate: number;
 
-    public constructor() {}
+    public constructor() { }
 
     public init(): void {
         this.tabs = [
@@ -75,6 +90,34 @@ export class Game {
         }
         this.initEffects();
 
+        this.options = {
+            keybinds: [
+                {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    key: '1',
+                    name: 'civilization',
+                    action: () => game.ui.activeTab = 'civilization'
+                }, {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    key: '2',
+                    name: 'civic',
+                    action: () => game.ui.activeTab = 'civic'
+                },
+                {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    key: '/',
+                    name: 'options',
+                    action: game.toggleOptions
+                }
+            ]
+        }
+
         this.tickRate = 5;
     }
 
@@ -84,14 +127,14 @@ export class Game {
         }, 1000 / this.tickRate);
     }
 
-    public stop(): void {}
+    public stop(): void { }
 
     public tick(): void {
         this.update();
     }
 
     public update(): void {
-        for(const tab of this.tabs) {
+        for (const tab of this.tabs) {
             tab.update();
         }
 
@@ -99,7 +142,7 @@ export class Game {
         this.bld.update();
 
         this.updateEffects();
-        
+
         this.ui.update();
     }
 
@@ -125,10 +168,10 @@ export class Game {
 
     public load(): void {
         const dataString = window.localStorage.getItem('civi.savedata');
-        if(!dataString) {
+        if (!dataString) {
             console.info("Didn't load anything from local storage, creating new game")
             return;
-        } 
+        }
 
         this.console.addMessage($I('game.load'));
         const { resources, buildings } = JSON.parse(dataString);
@@ -142,43 +185,48 @@ export class Game {
         window.location.reload();
     }
 
+    public toggleOptions(): void {
+        const dom = document.getElementById('options-modal');
+        dom.classList.toggle('is-active');
+    }
+
     public set ui(ui: UISystem) { this._ui = ui; }
     public get ui(): UISystem { return this._ui; }
 
-    static get instance(): Game { 
-        if(!Game._instance)
+    static get instance(): Game {
+        if (!Game._instance)
             Game._instance = new Game();
         return Game._instance;
     }
 
     private initEffects(): void {
         // Get all effects from the buildings
-        for(const bldName in this.bld.buildings) {
+        for (const bldName in this.bld.buildings) {
             const effect = this.bld.buildings[bldName].effects;
-            for(const effectName in effect) {
+            for (const effectName in effect) {
                 this.effects[effectName] = 0;
             }
         }
 
         // Gets all base effects
-        for(const effectName in this.effectsBase) {
+        for (const effectName in this.effectsBase) {
             this.effects[effectName] = this.effectsBase[effectName]
         }
     }
 
     private updateEffects(): void {
-        for(const effectName in this.effects) {
+        for (const effectName in this.effects) {
             let effect = 0;
-            for(const bldName in this.bld.buildings) {
+            for (const bldName in this.bld.buildings) {
                 const bld = this.bld.buildings[bldName];
-                for(const en in bld.effects) {
-                    if(effectName == en) {
+                for (const en in bld.effects) {
+                    if (effectName == en) {
                         effect += this.bld.getEffect(bld, effectName);
                     }
                 }
             }
 
-            if(effectName in this.effectsBase) {
+            if (effectName in this.effectsBase) {
                 effect += this.effectsBase[effectName]
             }
 
