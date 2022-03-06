@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import Modal from './modal/modal';
-import ModalHeader from './modal/modal-header';
-import ModalBody from './modal/modal-body';
-import ModalFooter from './modal/modal-footer';
+import Modal from '../components/modal/modal';
+import ModalHeader from '../components/modal/modal-header';
+import ModalBody from '../components/modal/modal-body';
+import ModalFooter from '../components/modal/modal-footer';
 import { i18n } from '../../../i18n';
 
 export function OptionsModal(): JSX.Element {
@@ -27,7 +27,7 @@ export function OptionsModal(): JSX.Element {
                 <select name="select-langauge" id="select-langauge">
                     <option value="none">Languages</option>
                     {i18n.langs.map(lang => (
-                        <option value="lang" onClick={() => setLanguage(lang)}>{i18n.langLabels[lang]}</option>
+                        <option key={lang} value="lang" onClick={() => setLanguage(lang)}>{i18n.langLabels[lang]}</option>
                     ))}
                 </select>
             </ModalBody>

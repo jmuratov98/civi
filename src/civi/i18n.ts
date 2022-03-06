@@ -32,7 +32,7 @@ class I18n {
             supportedLngs: this.langs,
             debug: true,
             resources: {
-                en
+                en: { translation: en }
             }
         });
     }

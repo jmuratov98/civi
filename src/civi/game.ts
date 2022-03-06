@@ -1,6 +1,6 @@
 import { UISystem } from './ui/ui';
 
-import { Tab, CivilizationTab, CivicTab, TestTab } from './tabs/tab'
+import { Tab, CivilizationTab, CivicTab } from './tabs/tab'
 import { ResourcesManager } from './managers/resources';
 import { BuildingsManager } from './managers/buildings';
 import { Console } from './console';
@@ -71,7 +71,6 @@ export class Game {
         this.tabs = [
             { className: CivilizationTab },
             { className: CivicTab },
-            { className: TestTab }
         ].map(({ className }) => {
             return new className();
         });
@@ -127,13 +126,7 @@ export class Game {
                     type: 'navigation',
                     name: 'civilization',
                     description: $I('options.keybind.civilization'),
-                    action: () => {
-                        const id = 'civilization'
-                        const res = game.tabs.find(tab => tab.id === id);
-                        if(res.visible) {
-                            game.ui.activeTab = id;
-                        }
-                    }
+                    action: () => this.changeTab('civilization')
                 }, {
                     alt: true,
                     ctrl: false,
@@ -143,13 +136,7 @@ export class Game {
                     type: 'navigation',
                     name: 'civic',
                     description: $I('options.keybind.civic'),
-                    action: () => {
-                        const id = 'civic'
-                        const res = game.tabs.find(tab => tab.id === id);
-                        if(res.visible) {
-                            game.ui.activeTab = id;
-                        }
-                    }
+                    action: () => this.changeTab('civic')
                 }, {
                     alt: true,
                     ctrl: false,
@@ -159,13 +146,7 @@ export class Game {
                     type: 'navigation',
                     name: 'civic',
                     description: $I('options.keybind.arrowleft'),
-                    action: () => {
-                        const id = game.ui.activeTab
-                        const filteredTabs = game.tabs.filter(tab => tab.visible)
-                        let res = filteredTabs.findIndex(tab => tab.id === id);
-                        res = (((res - 1) % filteredTabs.length) + filteredTabs.length) % filteredTabs.length;
-                        game.ui.activeTab = filteredTabs[res].id;
-                    }
+                    action: () => this.move('left'),
                 }, {
                     alt: true,
                     ctrl: false,
@@ -175,13 +156,7 @@ export class Game {
                     type: 'navigation',
                     name: 'civic',
                     description: $I('options.keybind.arrowright'),
-                    action: () => {
-                        const id = game.ui.activeTab
-                        const filteredTabs = game.tabs.filter(tab => tab.visible)
-                        let res = filteredTabs.findIndex(tab => tab.id === id);
-                        res = (res + 1) % filteredTabs.length;
-                        game.ui.activeTab = filteredTabs[res].id;
-                    }
+                    action: () => this.move('right')
                 }
             ]
         }
@@ -320,7 +295,24 @@ export class Game {
 
             this.effects[effectName] = effect;
         }
+    }
 
+    private changeTab(id: string) {
+        const res = game.tabs.find(tab => tab.id === id);
+        if(res.visible) {
+            game.ui.activeTab = id;
+        }
+    }
+
+    private move(direction: string) {
+        const id = game.ui.activeTab
+        const filteredTabs = game.tabs.filter(tab => tab.visible)
+        let res = filteredTabs.findIndex(tab => tab.id === id);
+        
+        if(direction === 'left') res = (((res - 1) % filteredTabs.length) + filteredTabs.length) % filteredTabs.length;
+        if(direction === 'right') res = (res + 1) % filteredTabs.length;
+        
+        game.ui.activeTab = filteredTabs[res].id;
     }
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Modal from './modal/modal';
-import Header from './modal/modal-header';
-import Body from './modal/modal-body';
+import Modal from '../components/modal/modal';
+import Header from '../components/modal/modal-header';
+import Body from '../components/modal/modal-body';
 import { game, KeyBind } from '../../../game';
 
 export function HotkeysModal(): JSX.Element {
@@ -34,7 +34,7 @@ export function HotkeysModal(): JSX.Element {
             <section className="kbd-section">
                 <span className='kbd-section-label'>{typeToLabel(type)}</span>
                 {kbds.map((kbd, i) => (
-                    <div className="kbd-keybind">
+                    <div key={i} className="kbd-keybind">
                         <div className="kbd-combo">
                             {kbd.ctrl && <kbd>Ctrl</kbd>}
                             {kbd.alt && <kbd>Alt</kbd>}
@@ -67,6 +67,7 @@ export function HotkeysModal(): JSX.Element {
                     {
                         Object.entries(reduceKeybinds()).map(([type, kbds], i) => (
                             <KBDSection
+                                key={i}
                                 type={type}
                                 kbds={kbds}
                             />

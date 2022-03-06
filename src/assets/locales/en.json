@@ -1,76 +1,70 @@
 {
-    "translation": {
-        "game": {
-            "welcome": "Welcome to Civi",
-            "save": "Saving...",
-            "load": "Loading..."
+    "game": {
+        "welcome": "Welcome to Civi",
+        "save": "Saving...",
+        "load": "Loading..."
+    },
+    "resource": {
+        "food": {
+            "label": "Food",
+            "button": "Gather Food",
+            "description": "Gather some food to feed your villagers"
         },
-        
-        "resource": {
-            "food": {
-                "label": "Food",
-                "button": "Gather Food",
-                "description": "Gather some food to feed your villagers"
-            },
-            "wood": {
-                "label": "Wood",
-                "button": "Chop Wood",
-                "description": "Chop some wood to build buildings"
-            },
-            "stone": {
-                "label": "Stone",
-                "button": "Mine Stone",
-                "description": "Mine some stone to build buildings"
-            },
-            "villager": {
-                "label": "Villager"
-            }, 
-            "ore": {
-                "label": "Ore"
-            }
+        "wood": {
+            "label": "Wood",
+            "button": "Chop Wood",
+            "description": "Chop some wood to build buildings"
         },
-
-        "building": {
-            "farm": {
-                "label": "Farm",
-                "description": "Plant some wheat to feed your population"
-            },
-            "hut": {
-                "label": "Hut",
-                "description": "A place where your villagers live. (Each villager eats about 5 food per second)"
-            }
+        "stone": {
+            "label": "Stone",
+            "button": "Mine Stone",
+            "description": "Mine some stone to build buildings"
         },
-
-        "tab": {
-            "civilization": {
-                "label": "Civilization"
-            },
-            "civic": {
-                "label": "Civic"
-            }
+        "villager": {
+            "label": "Villager"
         },
-
-        "effectsManager": {
-            "foodPerTickBase": "Food Per Tick",
-            "maxVillagers": "Max Villagers"
+        "ore": {
+            "label": "Ore"
+        }
+    },
+    "building": {
+        "farm": {
+            "label": "Farm",
+            "description": "Plant some wheat to feed your population"
         },
-        
-        "unit": {
-            "h": "h",
-            "hour": "hour",
-            "m": "m",
-            "min": "min",
-            "s": "s",
-            "sec": "sec"
+        "hut": {
+            "label": "Hut",
+            "description": "A place where your villagers live. (Each villager eats about 5 food per second)"
+        }
+    },
+    "tab": {
+        "civilization": {
+            "label": "Civilization"
         },
-
-        "options": {
-            "keybind": {
-                "settings": "Shows the settings popup",
-                "hotkeys": "Shows this message",
-                "civilization": "Goes to the civilization tab",
-                "civic": "Goes to he civics tab"
-            }
+        "civic": {
+            "label": "Civic"
+        }
+    },
+    "effectsManager": {
+        "foodPerTickBase": "Food Per Tick",
+        "maxVillagers": "Max Villagers"
+    },
+    "unit": {
+        "h": "h",
+        "hour": "hour",
+        "m": "m",
+        "min": "min",
+        "s": "s",
+        "sec": "sec"
+    },
+    "options": {
+        "keybind": {
+            "settings": "Shows the settings popup",
+            "hotkeys": "Shows this message",
+            "civilization": "Goes to the civilization tab",
+            "civic": "Goes to he civics tab",
+            "arrowleft": "Navigates to the left",
+            "arrowright": "Navigates to the right"
         }
     }
 }

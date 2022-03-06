@@ -5,7 +5,7 @@ import { $I } from '../../../i18n';
 import { Building, Price } from '../../../managers/buildings';
 import { Resource } from '../../../managers/resources';
 import { fixFloatingPoint } from '../../../utils';
-import { Tooltip, TooltipBody, TooltipSection } from './tooltip';
+import { Tooltip, TooltipBody, TooltipSection } from '../components/tooltip';
 
 interface CivilizationTooltipProps {
     description: string;
