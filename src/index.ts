@@ -4,12 +4,7 @@ import { game } from './civi/game'
 import { i18n } from './civi/i18n'
 import { DesktopUI } from './civi/ui/ui'
 
-function initGame(err: any) {
-    if(err) {
-        console.error(err)
-        return;
-    }
-    
+function initGame() {
     game.init();
     game.ui = new DesktopUI();
     
@@ -43,11 +38,11 @@ function initGame(err: any) {
     }
 
     document.getElementById('options-btn').onclick = game.toggleOptions;
-    
-    document.getElementById('close-options-modal').onclick = game.toggleOptions;
-
+    document.getElementById('hotkeys-btn').onclick = game.toggleHotkeys;
 }
 
 window.onload = function () {
-    i18n.init(initGame);
+    i18n
+        .init()
+        .then(() => initGame());
 }

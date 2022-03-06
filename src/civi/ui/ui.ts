@@ -5,6 +5,8 @@ import { game } from '../game'
 import { LeftColumn } from './tsx/left-column/left-column'
 import { MiddleColumn } from './tsx/middle-column/middle-column'
 import { RightColumn } from './tsx/right-column/right-column'
+import { OptionsModal } from "./tsx/modal/options-modal";
+import { HotkeysModal } from "./tsx/modal/hotkeys-modal";
 
 export abstract class UISystem {
     protected themes: string[]
@@ -17,7 +19,8 @@ export abstract class UISystem {
     abstract render(): void;
     abstract update(): void;
 
-    public abstract set activeTab(activeTab: string); 
+    public abstract set activeTab(activeTab: string);
+    public abstract get activeTab(): string;
 }
 
 export class DesktopUI extends UISystem {
@@ -39,6 +42,21 @@ export class DesktopUI extends UISystem {
 
         // Topbar
         this.renderTopbar();
+
+        // Modals
+        this.renderModal();
+    }
+
+    public renderModal(): void {
+        ReactDOM.render(
+            React.createElement(OptionsModal),
+            document.getElementById('options-modal')
+        )
+
+        ReactDOM.render(
+            React.createElement(HotkeysModal),
+            document.getElementById('hotkeys-modal')
+        )
     }
 
     public update(): void {
@@ -83,5 +101,7 @@ export class DesktopUI extends UISystem {
         this._activeTab = activeTab;
         this.renderMiddleColumn();
     }
+
+    public get activeTab(): string { return this._activeTab; }
 
 }

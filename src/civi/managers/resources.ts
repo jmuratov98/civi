@@ -87,6 +87,8 @@ export class ResourcesManager extends Manager<Resource> {
     public load(resources: SaveDataInfo[]): void {
         for(let i = 0; i < resources.length; i++) {
             const res = resources[i];
+            console.log(res.name);
+            console.log(this.meta.meta[res.name]);
             
             this.meta.meta[res.name].amount = res.amount;
             this.meta.meta[res.name].unlocked = res.unlocked;

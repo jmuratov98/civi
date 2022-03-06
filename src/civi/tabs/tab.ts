@@ -95,3 +95,13 @@ export class CivicTab extends Tab {
     public update(): void {
     }
 }
+
+export class TestTab extends Tab {
+    public constructor() {
+        super('Test', 'test');
+        this.visible = true;
+    }
+
+    public update(): void {
+    }
+}

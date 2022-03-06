@@ -1,6 +1,6 @@
 import { UISystem } from './ui/ui';
 
-import { Tab, CivilizationTab, CivicTab } from './tabs/tab'
+import { Tab, CivilizationTab, CivicTab, TestTab } from './tabs/tab'
 import { ResourcesManager } from './managers/resources';
 import { BuildingsManager } from './managers/buildings';
 import { Console } from './console';
@@ -24,12 +24,15 @@ interface SaveData {
     buildings: SaveDataInfo[]
 }
 
-interface KeyBind {
+export interface KeyBind {
     alt: boolean,
     ctrl: boolean,
     shift: boolean,
+    meta: boolean,
     key: string,
+    type: string,
     name: string,
+    description: string;
     action: () => void;
 }
 
@@ -67,7 +70,8 @@ export class Game {
     public init(): void {
         this.tabs = [
             { className: CivilizationTab },
-            { className: CivicTab }
+            { className: CivicTab },
+            { className: TestTab }
         ].map(({ className }) => {
             return new className();
         });
@@ -93,27 +97,91 @@ export class Game {
         this.options = {
             keybinds: [
                 {
-                    alt: true,
+                    alt: false,
                     ctrl: false,
                     shift: false,
-                    key: '1',
-                    name: 'civilization',
-                    action: () => game.ui.activeTab = 'civilization'
-                }, {
-                    alt: true,
-                    ctrl: false,
-                    shift: false,
-                    key: '2',
-                    name: 'civic',
-                    action: () => game.ui.activeTab = 'civic'
+                    meta: false,
+                    key: 's',
+                    type: 'settings',
+                    name: 'settings',
+                    description: $I('options.keybind.settings'),
+                    action: game.toggleOptions
                 },
                 {
                     alt: true,
                     ctrl: false,
                     shift: false,
+                    meta: false,
                     key: '/',
-                    name: 'options',
-                    action: game.toggleOptions
+                    type: 'settings',
+                    name: 'hotkeys',
+                    description: $I('options.keybind.hotkeys'),
+                    action: game.toggleHotkeys
+                },
+                {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    meta: false,
+                    key: '1',
+                    type: 'navigation',
+                    name: 'civilization',
+                    description: $I('options.keybind.civilization'),
+                    action: () => {
+                        const id = 'civilization'
+                        const res = game.tabs.find(tab => tab.id === id);
+                        if(res.visible) {
+                            game.ui.activeTab = id;
+                        }
+                    }
+                }, {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    meta: false,
+                    key: '2',
+                    type: 'navigation',
+                    name: 'civic',
+                    description: $I('options.keybind.civic'),
+                    action: () => {
+                        const id = 'civic'
+                        const res = game.tabs.find(tab => tab.id === id);
+                        if(res.visible) {
+                            game.ui.activeTab = id;
+                        }
+                    }
+                }, {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    meta: false,
+                    key: 'ArrowLeft',
+                    type: 'navigation',
+                    name: 'civic',
+                    description: $I('options.keybind.arrowleft'),
+                    action: () => {
+                        const id = game.ui.activeTab
+                        const filteredTabs = game.tabs.filter(tab => tab.visible)
+                        let res = filteredTabs.findIndex(tab => tab.id === id);
+                        res = (((res - 1) % filteredTabs.length) + filteredTabs.length) % filteredTabs.length;
+                        game.ui.activeTab = filteredTabs[res].id;
+                    }
+                }, {
+                    alt: true,
+                    ctrl: false,
+                    shift: false,
+                    meta: false,
+                    key: 'ArrowRight',
+                    type: 'navigation',
+                    name: 'civic',
+                    description: $I('options.keybind.arrowright'),
+                    action: () => {
+                        const id = game.ui.activeTab
+                        const filteredTabs = game.tabs.filter(tab => tab.visible)
+                        let res = filteredTabs.findIndex(tab => tab.id === id);
+                        res = (res + 1) % filteredTabs.length;
+                        game.ui.activeTab = filteredTabs[res].id;
+                    }
                 }
             ]
         }
@@ -182,12 +250,32 @@ export class Game {
 
     public wipe(): void {
         window.localStorage.removeItem('civi.savedata');
+        window.localStorage.removeItem('civi.language');
+        // TODO: reset the game options as well
         window.location.reload();
     }
 
     public toggleOptions(): void {
         const dom = document.getElementById('options-modal');
         dom.classList.toggle('is-active');
+    }
+
+    public toggleHotkeys(): void {
+        const dom = document.getElementById('hotkeys-modal');
+        dom.classList.toggle('is-active');
+    }
+
+    public unlocks(unlocks: Record<string, string[]>): void {
+        if(unlocks.tabs) {
+            const { tabs: tabNames } = unlocks;
+            for(let i = 0; i < tabNames.length; i++) {
+                const tabName = tabNames[i];
+                const tab = this.tabs.find(tab => tab.id == tabName);
+            
+                if(!tab.visible)
+                    tab.visible = true; 
+            }
+        }
     }
 
     public set ui(ui: UISystem) { this._ui = ui; }

@@ -1,7 +1,8 @@
 import { game } from '../game'
+import { Building } from '../managers/buildings';
 
 export abstract class ButtonController {
-    abstract handleClick(model: string | void): void;
+    abstract handleClick(model: Building | void): void;
 }
 
 export class FoodButtonController extends ButtonController {
@@ -42,8 +43,17 @@ export class BuildingButtonController extends ButtonController {
         super();
     }
 
-    public handleClick(bldName: string): void {
-        game.bld.buyBuilding(bldName, 1)
+    public handleClick(bld: Building): void {
+        game.bld.buyBuilding(bld.name, 1);
+        if(bld.name === 'hut') {
+            // Do something later
+        }
+
+        // Unlocks
+        if(bld.unlocks) {
+            game.unlocks(bld.unlocks)
+        }
+
         game.render();
     }
 }
