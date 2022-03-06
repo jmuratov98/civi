@@ -7,6 +7,7 @@ type i18Callback = (err: any) => void
 class I18n {
     readonly defaultLang: string;
     readonly langs: string[];
+    readonly langLabels: Record<string, string>;
     private _currentLanguage: string
     
     constructor() {
@@ -17,23 +18,32 @@ class I18n {
             // TODO: Add support for other languages
         ]
 
+        this.langLabels = {
+            'en': 'English',
+        }
+
         this.getCurrentLanguage();
     }
 
-    public init(callback: i18Callback) {
-        i18next.init({
+    public init() {
+        return i18next.init({
             fallbackLng: this.defaultLang,
             lng: this._currentLanguage,
             supportedLngs: this.langs,
             debug: true,
             resources: {
-                en
+                en: { translation: en }
             }
-        }, callback);
+        });
     }
 
     public t(str: string): string {
         return i18next.t(str);
+    }
+
+    public setLanguage(language: string) {
+        window.localStorage.setItem('civi.language', language);
+        window.location.reload();
     }
 
     private getCurrentLanguage(): void {

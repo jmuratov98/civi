@@ -5,7 +5,7 @@ import { $I } from '../../../i18n';
 import { Building, Price } from '../../../managers/buildings';
 import { Resource } from '../../../managers/resources';
 import { fixFloatingPoint } from '../../../utils';
-import { Tooltip, TooltipBody, TooltipSection } from './tooltip';
+import { Tooltip, TooltipBody, TooltipSection } from '../components/tooltip';
 
 interface CivilizationTooltipProps {
     description: string;
@@ -54,7 +54,11 @@ function PriceSection({
         minutes %= 60;
 
         return Number.isFinite(seconds) && (
-            <div>( {hours} {$I('unit.h')} {minutes} {$I('unit.m')} {seconds} {$I('unit.s')} )</div>
+            <div>( 
+                {hours != 0 && `${hours} ${$I('unit.h')}`}
+                {minutes != 0 && `${minutes} ${$I('unit.m')}`}
+                {seconds != 0 && `${seconds} ${$I('unit.s')}`}
+            )</div>
         )
     }
 

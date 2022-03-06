@@ -68,7 +68,7 @@ export function Button({
 
     function onClick(): void {
         if (model) {
-            controller.handleClick(model.name)
+            controller.handleClick(model)
         } else {
             controller.handleClick();
         }

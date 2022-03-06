@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { game } from '../../../game'
 import { Tab } from '../../../tabs/tab'
@@ -6,7 +6,7 @@ import { Tab } from '../../../tabs/tab'
 interface TabContentProps {
     buttons: any[]
 }
-export function TabContent({ 
+export function TabContent({
     buttons
 }: TabContentProps): JSX.Element {
     return (
@@ -16,20 +16,23 @@ export function TabContent({
     )
 }
 
-export function TabsContainer(): JSX.Element {
-    const [activeTab, setActiveTab] = useState<string>('civilization')
+interface TabsContainerProps {
+    activeTab: string
+}
+export function TabsContainer({ 
+    activeTab
+}: TabsContainerProps): JSX.Element {
+
     return (
         <div id="tabs-container">
             <div className="tabs" role='tablist' aria-orientation='horizontal'>
                 {game.tabs.filter(tab => tab.visible).map((tab: Tab) => (
-                    <span 
+                    <span
                         className={`tab${activeTab === tab.id ? ' is-active' : ''}`}
                         id={tab.id}
                         key={tab.id}
                         onClick={() => {
-                            if (tab.id === activeTab) return;
-
-                            setActiveTab(tab.id);
+                            game.ui.activeTab = tab.id;
                         }}
                     >
                         {tab.name}

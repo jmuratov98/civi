@@ -35,6 +35,21 @@ export class BuildingsManager extends Manager<Building> {
             effects: {
                 'foodPerTickBase': 0.125,
             },
+        }, {
+            name: 'hut',
+            label: $I('building.hut.label'),
+            description: $I('building.farm.description'),
+            unlockRatio: 0.3,
+            prices: [
+                { name: 'wood', amount: 10 }
+            ],
+            priceRatio: 1.75,
+            effects: {
+                'maxVillagers': 1
+            },
+            unlocks: {
+                tabs: ['civic']
+            }
         }
     ]
     

@@ -2,16 +2,26 @@ import React from 'react';
 
 import { TabsContainer } from './tabs-container';
 
-export function GameContainer(): JSX.Element {
+interface GameContainerProps {
+    activeTab: string;
+}
+export function GameContainer({
+    activeTab
+}: GameContainerProps): JSX.Element {
     return (
         <div id='game-container'>
-            <TabsContainer />
+            <TabsContainer activeTab={activeTab} />
         </div>
     )
 }
 
-export function MiddleColumn(): JSX.Element {
+interface MiddleColumnProps {
+    activeTab: string;
+}
+export function MiddleColumn({
+    activeTab
+}: MiddleColumnProps): JSX.Element {
     return (
-        <GameContainer />
+        <GameContainer activeTab={activeTab} />
     );
 }

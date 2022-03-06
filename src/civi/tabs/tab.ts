@@ -89,7 +89,6 @@ export class CivilizationTab extends Tab {
 export class CivicTab extends Tab {
     public constructor() {
         super($I('tab.civic.label'), 'civic');
-        this.visible = true;
     }
 
     public update(): void {
