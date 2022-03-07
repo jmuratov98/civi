@@ -25,7 +25,6 @@ export function HotkeysModal(): JSX.Element {
             result[kb.type].push(kb);
         }
 
-        console.log(result);
         return result;
     }
 

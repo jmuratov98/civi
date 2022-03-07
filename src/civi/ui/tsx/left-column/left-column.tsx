@@ -25,9 +25,11 @@ export function ResourceContainer(): JSX.Element {
         <div className="res-container">
             <div className="res-container__label"></div>
             <table className="res-table">
+                <tbody>
                 {Object.values(game.res.resources).map((res: Resource, i: number) => {
                     return <ResourceRow res={res} key={i} />
                 })}
+                </tbody>
             </table>
         </div>
     )

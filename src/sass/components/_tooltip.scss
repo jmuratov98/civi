@@ -39,14 +39,22 @@
 
         &-amount {
             padding-right: 2px;
-            &::after {
-                padding-left: 2px;
-                content: '/'
+            
+            &.red {
+                color: red;
+            }
+
+            &.green {
+                color: green;
             }
         }
 
         &-max {
             padding-right: 2px;
+            &::before {
+                padding-right: 2px;
+                content: '/'
+            }
         }
 
         &-time {

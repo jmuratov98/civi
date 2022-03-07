@@ -97,12 +97,12 @@ function PriceElement({
             {
                 amount < price ? (
                     <div className="tooltip__price-rs">
-                        <span className="tooltip__price-amount">{amount}</span>
+                        <span className="tooltip__price-amount red">{amount}</span>
                         <span className="tooltip__price-max">{price}</span>
                         <span className="tooltip__price-time">{time}</span>
                     </div>
                 ) : (
-                    <div className="tooltip__price-rs">
+                    <div className="tooltip__price-amount green">
                         {price}
                     </div>
                 )
@@ -120,7 +120,7 @@ function EffectSection({
     return (
         <TooltipSection label='effects'>
             {Object.entries(model.effects).map(([effectName, effectValue], i: number) => (
-                <div className="tooltip__price">
+                <div key={i} className="tooltip__price">
                     <span>{$I('effectsManager.' + effectName)}</span>
                     <span>{effectValue}</span>
                 </div>

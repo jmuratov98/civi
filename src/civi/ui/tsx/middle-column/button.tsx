@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Building } from '../../../managers/buildings'
@@ -21,49 +21,68 @@ export function Button({
     description
 }: ButtonProps): JSX.Element {
 
+    const [show, setShow] = useState(false);
+
     const buttonRef = useRef();
 
-    const tooltipContainer = document.getElementById('tooltip-container');
+    useEffect(() => {
+        const tooltipContainer = document.getElementById('tooltip-container');
+        let id: number;
 
-    function createTooltip(): any {
-        return ReactDOM.render(
-            React.createElement(CivilizationTooltip, { model, description }),
-            tooltipContainer
-        )
-    }
-
-    function onMouseOver() {
-        const attachTooltip = () => createTooltip();
-
-        attachTooltip();
-
-        const tooltip = (tooltipContainer.children[0] as HTMLElement);
-        const pos = getPosition(buttonRef.current)
-        pos.x += 310;
-
-        const maxTooltipTop = window.scrollY + window.innerHeight - tooltip.clientHeight - 50;
-        const maxTooltipLeft = window.scrollX + window.innerWidth - tooltip.clientWidth - 50;
-
-        if (pos.left < maxTooltipLeft) {
-            pos.y = Math.min(pos.top, maxTooltipTop);
-        } else {
-            pos.x = maxTooltipLeft;
-            const vOffset = 35;
-            if (pos.top + vOffset <= maxTooltipTop) {
-                pos.y += vOffset
-            } else {
-                pos.y -= tooltip.clientHeight + 10;
-            }
+        function createTooltip(): any {
+            return ReactDOM.render(
+                React.createElement(CivilizationTooltip, { model, description }),
+                tooltipContainer
+            )
         }
 
-        setCssVariable(tooltip, '--left', pos.x.toString());
-        setCssVariable(tooltip, '--top', pos.y.toString());
+        if(show) {
+            id = window.setInterval(() => {
+                const attachTooltip = () => createTooltip();
+    
+                attachTooltip();
+    
+                const tooltip = (tooltipContainer.children[0] as HTMLElement);
+                const pos = getPosition(buttonRef.current)
+                pos.x += 310;
+    
+                const maxTooltipTop = window.scrollY + window.innerHeight - tooltip.clientHeight - 50;
+                const maxTooltipLeft = window.scrollX + window.innerWidth - tooltip.clientWidth - 50;
+    
+                if (pos.left < maxTooltipLeft) {
+                    pos.y = Math.min(pos.top, maxTooltipTop);
+                } else {
+                    pos.x = maxTooltipLeft;
+                    const vOffset = 35;
+                    if (pos.top + vOffset <= maxTooltipTop) {
+                        pos.y += vOffset
+                    } else {
+                        pos.y -= tooltip.clientHeight + 10;
+                    }
+                }
+    
+                setCssVariable(tooltip, '--left', pos.x.toString());
+                setCssVariable(tooltip, '--top', pos.y.toString());
+    
+                tooltipContainer.style.display = 'block';
+            }, 100)
+        } else {
+            tooltipContainer.style.display = 'none';
+        }
 
-        tooltipContainer.style.display = 'block';
+
+        return () => {
+            window.clearInterval(id);
+        }
+    }, [show])
+
+
+    function onMouseOver() {
+        setShow(true);
     }
 
     function onMouseOut() {
-        tooltipContainer.style.display = 'none';
+        setShow(false);
     }
 
     function onClick(): void {
