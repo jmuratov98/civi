@@ -45,9 +45,6 @@ export class BuildingButtonController extends ButtonController {
 
     public handleClick(bld: Building): void {
         game.bld.buyBuilding(bld.name, 1);
-        if(bld.name === 'hut') {
-            // Do something later
-        }
 
         // Unlocks
         if(bld.unlocks) {

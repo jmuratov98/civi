@@ -5,6 +5,7 @@ import { ResourcesManager } from './managers/resources';
 import { BuildingsManager } from './managers/buildings';
 import { Console } from './console';
 import { $I } from './i18n';
+import { VillagerSimulator } from './villagers';
 
 interface Version {
     major: number;
@@ -56,6 +57,8 @@ export class Game {
     public console: Console;
 
     public version: Version;
+
+    public villagerSim: VillagerSimulator; // TODO: Remove this later, when implementing a villager
 
     // Effects
     public effects: Effects;
@@ -161,6 +164,8 @@ export class Game {
             ]
         }
 
+        this.villagerSim = new VillagerSimulator();
+
         this.tickRate = 5;
     }
 
@@ -183,6 +188,8 @@ export class Game {
 
         this.res.update();
         this.bld.update();
+
+        this.villagerSim.update();
 
         this.updateEffects();
 

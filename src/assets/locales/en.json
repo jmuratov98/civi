@@ -47,7 +47,7 @@
     },
     "effectsManager": {
         "foodPerTickBase": "Food Per Tick",
-        "maxVillagers": "Max Villagers"
+        "villagerMax": "Max Villagers"
     },
     "unit": {
         "h": "h",

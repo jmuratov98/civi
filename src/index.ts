@@ -1,6 +1,6 @@
 import './sass/style.scss';
 
-import { game } from './civi/game'
+import { game, Game } from './civi/game'
 import { i18n } from './civi/i18n'
 import { DesktopUI } from './civi/ui/ui'
 
@@ -41,8 +41,17 @@ function initGame() {
     document.getElementById('hotkeys-btn').onclick = game.toggleHotkeys;
 }
 
+declare global {
+    interface Window {
+        civi: Game;
+    }
+}
+
 window.onload = function () {
     i18n
         .init()
         .then(() => initGame());
+
+    // (window as GameWindow).game = game;
+    window.civi = game;
 }

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
+import { game } from '../../../game'
 import { Building } from '../../../managers/buildings'
 import { ButtonController } from '../../../btn-controllers/btn-controller'
 import { CivilizationTooltip } from '../tooltip/civilization-tooltip';
@@ -104,6 +105,9 @@ export function Button({
             {label}
             {model && (
                 <span>({model.amount})</span>
+            )}
+            {model && model.name == 'hut' && game.villagerSim.progress > 0 && (
+                <span>[{game.villagerSim.progress}%]</span>
             )}
         </button>
     )

@@ -45,7 +45,7 @@ export class BuildingsManager extends Manager<Building> {
             ],
             priceRatio: 1.75,
             effects: {
-                'maxVillagers': 1
+                'villagerMax': 1
             },
             unlocks: {
                 tabs: ['civic']

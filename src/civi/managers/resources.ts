@@ -46,6 +46,8 @@ export class ResourcesManager extends Manager<Resource> {
         for(const resName in this.resources) {
             const res = this.resources[resName];
 
+            if(res.name == 'villager') res.amount = game.villagerSim.villagers.length;
+
             if(!res.unlocked && res.amount > 0) res.unlocked = true
 
             // Calculate the per tick here
